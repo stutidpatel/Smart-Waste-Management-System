@@ -14,13 +14,11 @@ const RegisterNavBar = () => {
         </NavLink>
         <ul>
           <li>
-            <NavLink to='/register/student'>Customer Registration</NavLink>
+            <NavLink to='/register/customer'>Customer Registration</NavLink>
           </li>
+          
           <li>
-            <NavLink to='/register/company'>Orgnanisation Registration</NavLink>
-          </li>
-          <li>
-            <NavLink to='/register/faculty'>Commietee Registration</NavLink>
+            <NavLink to='/register/committee'>Committee Registration</NavLink>
           </li>
         </ul>
       </nav>

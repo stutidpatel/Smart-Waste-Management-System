@@ -1,10 +1,9 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './App.css';
-import Company from './Registration/Company';
-import Faculty from './Registration/Faculty';
+import Committee from './Registration/Committee';
 import Login from './Login.js';
 import Register from './Registration/Register.js';
-import Student from './Registration/Student';
+import Customer from './Registration/Customer';
 import Welcome from './Welcome.js';
 
 function App() {
@@ -16,10 +15,9 @@ function App() {
       <Routes>
         <Route path='/' element={<Welcome />} />
         <Route path='/register' element={<Register />}>
-          <Route index element={<Student />} />
-          <Route path='student' element={<Student />} />
-          <Route path='faculty' element={<Faculty />} />
-          <Route path='company' element={<Company />} />
+          <Route index element={<Customer />} />
+          <Route path='customer' element={<Customer />} />
+          <Route path='committee' element={<Committee />} />
         </Route>
         <Route path='/login' element={<Login />} />
       </Routes>
