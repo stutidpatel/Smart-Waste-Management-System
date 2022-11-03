@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router';
+import React, { useState, useEffect } from 'react';
+// import { useNavigate } from 'react-router';
 import RegistarationFormInput from './RegistarationFormInput';
 import './RegistrationFormStyle.css';
 import SWMSAddress from '../../contractsData/SWMS-address.json'
 import SWMSAbi from '../../contractsData/SWMS.json'
 import { ethers } from "ethers"
 const Customer = () => {
-  let navigate = useNavigate();
+  // let navigate = useNavigate();
 
   const [account, setAccount] = useState(null)
   const [swms, setSwms] = useState({})
@@ -79,7 +79,9 @@ const Customer = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+    web3Handler();
+    // web3Handler();
+    console.log("HandleSubmit ", account, swms);
     // navigate('/login');
   };
 
@@ -93,10 +95,13 @@ const Customer = () => {
   const web3Handler = async () => {
 
     const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-    setAccount(accounts[0])
+    setAccount(accounts[0]);
+    console.log("Acc= ", accounts[0]);
+    console.log("Acc state= ", account);
 
     // Get provider from Metamask
     const provider = new ethers.providers.Web3Provider(window.ethereum)
+    console.log("After provider");
 
     // Set signer
     const signer = provider.getSigner()
@@ -115,12 +120,14 @@ const Customer = () => {
   const loadContracts = async (signer) => {
     console.log("in load Contract")
 
-    const swms = new ethers.Contract(SWMSAddress.address, SWMSAbi.abi, signer)
-    setSwms(swms);
-    console.log("Loaded..",swms);
+    const swms1 = new ethers.Contract(SWMSAddress.address, SWMSAbi.abi, signer)
+    setSwms(swms1);
+    console.log("Loaded..", swms, account);
     // setLoading(false)
   }
-
+  useEffect(() => {
+    web3Handler()
+  }, [])
 
   return (
     <div className='divForm'>
@@ -134,7 +141,11 @@ const Customer = () => {
             onChange={onChange}
           />
         ))}
-        <button onClick={ web3Handler} className='submitButton'>Register as a customer</button>
+        {
+          // <button onClick={web3Handler} className='submitButton'>Register as a customer</button>
+        }
+        <button className='submitButton'>Register as a customer</button>
+
       </form>
     </div>
   );
