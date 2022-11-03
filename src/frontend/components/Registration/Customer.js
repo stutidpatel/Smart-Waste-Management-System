@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router';
 import RegistarationFormInput from './RegistarationFormInput';
 import './RegistrationFormStyle.css';
 
 const Customer = () => {
+  let navigate = useNavigate();
+
   const [customer, setCustomer] = useState({
     fullName: '',
     addressL1: '',
@@ -13,13 +16,13 @@ const Customer = () => {
   });
 
   const inputs = [
-
     {
       id: 'fullName',
       name: 'fullName',
       type: 'text',
       placeholder: 'Full Name',
-      errorMessage: 'Name should only consist of letters.',
+      errorMessage:
+        'Name should only consist of letters.',
       label: 'Full Name',
       pattern: '[A-Za-z]+ [A-Za-z]+\\s{0,1}[A-Za-z]*',
       required: true,
@@ -31,7 +34,7 @@ const Customer = () => {
       placeholder: 'Address Line One',
       errorMessage: 'Address is not valid.',
       label: 'Address Line One',
-      pattern: '[A-Za-z0-9,.]+',
+      pattern: '[A-Za-z0-9,-. ]*',
       required: true,
     },
     {
@@ -41,18 +44,16 @@ const Customer = () => {
       placeholder: 'Address Line Two',
       errorMessage: 'Address is not valid.',
       label: 'Address Line Two',
-      pattern: '[A-Za-z0-9,.]*',
+      pattern: '[A-Za-z0-9,-. ]*',
       required: false,
     },
     {
       id: 'password',
       name: 'password',
-      type: 'text',
+      type: 'password',
       placeholder: 'Paswsword',
       errorMessage:
         'The password should be 8 to 20 characters and should have atleast 1 number, 1 special character, 1 alphabet',
-      pattern:
-        `^(?=.*[a-zA-Z])(?=.*d)(?=.*[!@#$%^&*()_+])[A-Za-zd][A-Za-zd!@#$%^&*()_+]{8,20}$`,
       label: 'Paswsword',
       required: true,
     },
@@ -74,6 +75,8 @@ const Customer = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    
+    // navigate('/login');
   };
 
   const onChange = (e) => {
