@@ -8,9 +8,7 @@ import Welcome from './Welcome.js';
 
 function App() {
   return (
-    // <div className='App'> ndnlsdnlf
-    //   <h1>Navbar will come here</h1>
-
+    
     <BrowserRouter>
       <Routes>
         <Route path='/' element={<Welcome />} />
