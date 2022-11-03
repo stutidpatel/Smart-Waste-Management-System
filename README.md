@@ -1,4 +1,4 @@
-# Blockchain Based Placement
+# Blockchain Based Smart Waste Management System
 
 ## Technology Stack & Tools
 
