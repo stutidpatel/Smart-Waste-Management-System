@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
 import RegistarationFormInput from './RegistarationFormInput';
 import './RegistrationFormStyle.css';
-
+import SWMSAddress from '../../contractsData/SWMS-address.json'
+import SWMSAbi from '../../contractsData/SWMS.json'
+import { ethers } from "ethers"
 const Customer = () => {
+  const [account, setAccount] = useState(null)
+  const [swms, setSwms] = useState({})
   const [customer, setCustomer] = useState({
     fullName: '',
     addressL1: '',
@@ -81,6 +85,39 @@ const Customer = () => {
   };
 
   // console.log(customer);
+   
+  // loading contract
+  const web3Handler = async () => {
+
+    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+    setAccount(accounts[0])
+
+    // Get provider from Metamask
+    const provider = new ethers.providers.Web3Provider(window.ethereum)
+
+    // Set signer
+    const signer = provider.getSigner()
+
+    window.ethereum.on('chainChanged', (chainId) => {
+      window.location.reload();
+    })
+
+    window.ethereum.on('accountsChanged', async function (accounts) {
+      setAccount(accounts[0])
+      await web3Handler()
+    })
+    loadContracts(signer)
+    console.log(account)
+  }
+  const loadContracts = async (signer) => {
+    console.log("in load Contract")
+
+    const swms = new ethers.Contract(SWMSAddress.address, SWMSAbi.abi, signer)
+    setSwms(swms);
+    console.log("Loaded..",swms);
+    // setLoading(false)
+  }
+
 
   return (
     <div className='divForm'>
@@ -94,7 +131,7 @@ const Customer = () => {
             onChange={onChange}
           />
         ))}
-        <button className='submitButton'>Register as a customer</button>
+        <button onClick={ web3Handler} className='submitButton'>Register as a customer</button>
       </form>
     </div>
   );
