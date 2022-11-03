@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 
-const Faculty = () => {
+const Committee = () => {
   const [faculty, setFaculty] = useState({
     fullName: '',
-    branch: '',
+    contactNumber: '',
     password: '',
     confirmPassword: '',
   });
 
-  return <div>Faculty</div>;
+  return (
+    <div>what man</div>
+  );
 };
 
-export default Faculty;
+export default Committee;
