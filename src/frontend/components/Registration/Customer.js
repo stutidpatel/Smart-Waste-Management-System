@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import RegistarationFormInput from './RegistarationFormInput';
 import './RegistrationFormStyle.css';
@@ -7,6 +7,7 @@ import SWMSAbi from '../../contractsData/SWMS.json'
 import { ethers } from "ethers"
 const Customer = () => {
   let navigate = useNavigate();
+  const accounts = [0];
 
   const [account, setAccount] = useState(null)
   const [swms, setSwms] = useState({})
@@ -92,7 +93,7 @@ const Customer = () => {
   // loading contract
   const web3Handler = async () => {
 
-    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+    accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
     setAccount(accounts[0])
 
     // Get provider from Metamask
@@ -121,6 +122,9 @@ const Customer = () => {
     // setLoading(false)
   }
 
+  useEffect(() => {
+    setAccount(accounts[0]);
+  }, []);
 
   return (
     <div className='divForm'>
