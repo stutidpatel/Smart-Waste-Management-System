@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+// import { useNavigate } from 'react-router';
 import RegistarationFormInput from './RegistarationFormInput';
 import './RegistrationFormStyle.css';
 import { ethers } from 'ethers';
@@ -84,7 +85,6 @@ const Customer = ({web3Handler,account,swms}) => {
     console.log("Address", temp);
     const customerId = await swms.registerCustomer(customer.fullName.toString(), temp.toString(),customer.password.toString())
     console.log("Customer id: ", customerId);
-    alert('Your Customer id is: ', customerId);
     // web3Handler();
     // navigate('/login');
   };
@@ -94,8 +94,8 @@ const Customer = ({web3Handler,account,swms}) => {
   };
   const checkCust = async (e) => {
     console.log("CUstomer created ..",swms);
-    const customerId = await swms.totalCustomers();
-    console.log("CID", customerId._hex.toString());
+    let customerId = await swms.totalCustomers();
+    console.log("CID", parseInt(customerId,16));
     // console.log("Customer Details: ", await swms.customers[customerId].name);
   }
   
