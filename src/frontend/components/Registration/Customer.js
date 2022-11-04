@@ -1,5 +1,4 @@
-import React, { useEffect, useState, useEffect } from 'react';
-// import { useNavigate } from 'react-router';
+import React, { useState, useEffect } from 'react';
 import RegistarationFormInput from './RegistarationFormInput';
 import './RegistrationFormStyle.css';
 import { ethers } from 'ethers';
@@ -99,13 +98,9 @@ const Customer = ({web3Handler,account,swms}) => {
     console.log("CID", customerId._hex.toString());
     // console.log("Customer Details: ", await swms.customers[customerId].name);
   }
+  
   // console.log(customer);
    
-  
-  // useEffect(() => {
-  //   web3Handler()
-  // }, [])
-
   return (
     <div className='divForm'>
       <button className='submitButton' onClick={web3Handler}  >Connect the account</button>
