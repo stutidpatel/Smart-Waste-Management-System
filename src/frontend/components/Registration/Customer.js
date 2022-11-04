@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState, useEffect } from 'react';
 // import { useNavigate } from 'react-router';
 import RegistarationFormInput from './RegistarationFormInput';
 import './RegistrationFormStyle.css';
