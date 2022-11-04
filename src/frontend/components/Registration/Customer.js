@@ -2,14 +2,13 @@ import React, { useState, useEffect } from 'react';
 // import { useNavigate } from 'react-router';
 import RegistarationFormInput from './RegistarationFormInput';
 import './RegistrationFormStyle.css';
-import SWMSAddress from '../../contractsData/SWMS-address.json'
-import SWMSAbi from '../../contractsData/SWMS.json'
-import { ethers } from "ethers"
-const Customer = () => {
+import { ethers } from 'ethers';
+import { Alert } from 'bootstrap';
+const Customer = ({web3Handler,account,swms}) => {
   // let navigate = useNavigate();
 
-  const [account, setAccount] = useState(null)
-  const [swms, setSwms] = useState({})
+  // const [account, setAccount] = useState(null)
+  // const [swms, setSwms] = useState({})
   const [customer, setCustomer] = useState({
     fullName: '',
     addressL1: '',
@@ -77,60 +76,41 @@ const Customer = () => {
     /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d][A-Za-z\d!@#$%^&*()_+]{7,19}$/
   );
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
-    web3Handler();
+    console.log("HandleSubmit... ", account, swms);
     // web3Handler();
-    console.log("HandleSubmit ", account, swms);
+    console.log("HandleSubmit 2 ", account, swms);
+    const temp = customer.addressL1 + " "+ customer.addressL2;
+    console.log("Address", temp);
+    const customerId = await swms.registerCustomer(customer.fullName.toString(), temp.toString(),customer.password.toString())
+    console.log("Customer id: ", customerId);
+    alert('Your Customer id is: ', customerId);
+    // web3Handler();
     // navigate('/login');
   };
 
   const onChange = (e) => {
     setCustomer({ ...customer, [e.target.name]: [e.target.value] });
   };
-
+  const checkCust = async (e) => {
+    console.log("CUstomer created ..",swms);
+    const customerId = await swms.totalCustomers();
+    console.log("CID", customerId._hex.toString());
+    // console.log("Customer Details: ", await swms.customers[customerId].name);
+  }
   // console.log(customer);
    
-  // loading contract
-  const web3Handler = async () => {
-
-    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-    setAccount(accounts[0]);
-    console.log("Acc= ", accounts[0]);
-    console.log("Acc state= ", account);
-
-    // Get provider from Metamask
-    const provider = new ethers.providers.Web3Provider(window.ethereum)
-    console.log("After provider");
-
-    // Set signer
-    const signer = provider.getSigner()
-
-    window.ethereum.on('chainChanged', (chainId) => {
-      window.location.reload();
-    })
-
-    window.ethereum.on('accountsChanged', async function (accounts) {
-      setAccount(accounts[0])
-      await web3Handler()
-    })
-    loadContracts(signer)
-    console.log(account)
-  }
-  const loadContracts = async (signer) => {
-    console.log("in load Contract")
-
-    const swms1 = new ethers.Contract(SWMSAddress.address, SWMSAbi.abi, signer)
-    setSwms(swms1);
-    console.log("Loaded..", swms, account);
-    // setLoading(false)
-  }
-  useEffect(() => {
-    web3Handler()
-  }, [])
+  
+  // useEffect(() => {
+  //   web3Handler()
+  // }, [])
 
   return (
     <div className='divForm'>
+      <button className='submitButton' onClick={web3Handler}  >Connect the account</button>
+      <button className='submitButton' onClick={checkCust}  >get cust details</button>
+
       <form onSubmit={handleSubmit} className='registrationForm'>
         <h1 className='formHeader'>Customer Registration</h1>
         {inputs.map((input) => (
@@ -144,8 +124,7 @@ const Customer = () => {
         {
           // <button onClick={web3Handler} className='submitButton'>Register as a customer</button>
         }
-        <button className='submitButton'>Register as a customer</button>
-
+        <button className='submitButton'  >Register as a customer</button>
       </form>
     </div>
   );

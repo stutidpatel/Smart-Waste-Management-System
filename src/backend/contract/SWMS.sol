@@ -30,7 +30,7 @@ contract SWMS {
 
     // "Taha","Nirma Uni","kj123@"
     function registerCustomer(string memory _name, string memory _customerAddress, string memory _password) public returns (uint){
-        require(!checkUniquenessOfAddressInSystem(payable(msg.sender)), "Please use another address");
+        // require(!checkUniquenessOfAddressInSystem(payable(msg.sender)), "Please use another address");
 
         totalCustomers++;
         customers[totalCustomers]=Customer(
@@ -41,6 +41,7 @@ contract SWMS {
             _password
         
         );
+        console.log("In sol",totalCustomers);
         return totalCustomers;
 
     }
