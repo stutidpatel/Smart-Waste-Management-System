@@ -45,7 +45,7 @@ contract SWMS {
 
     // "Taha","Nirma Uni","kj123@"
     function registerCustomer(string memory _name, string memory _customerAddress, string memory _password) public returns (uint){
-        require(!doesAddressExists(payable(msg.sender)), "Please use another address");
+        require(!doesAddressExists(payable(msg.sender)), "___Please use another address___");
 
         totalCustomers++;
         customers[totalCustomers]=Customer(
@@ -66,7 +66,7 @@ contract SWMS {
      // For committee members
     function registerCommittee(string memory _name, uint256 _contactNumber, string memory _password) public returns (uint){
         // check for uniqueness of wallet address
-        require(!doesAddressExists(payable(msg.sender)), "__Please use another address. Address is registered.__");
+        require(!doesAddressExists(payable(msg.sender)), "___Please use another address. Address is registered.___");
 
         totalMembers++;
         members[totalMembers]=CommitteeMember(
@@ -109,10 +109,10 @@ contract SWMS {
 
     function loginCustomer(uint _customerId, string memory _password)  public returns (bool){
         //customer not registered
-        require(customerExists(_customerId),"Customer not registered with this account");
+        require(customerExists(_customerId),"___Customer not registered with this account___");
 
         // customer credential invalid
-        require(isValidCustomer(_customerId,_password),"Invalid credentials");
+        require(isValidCustomer(_customerId,_password),"___Invalid credentials___");
 
         // require(false,"Login Successful");
         console.log("Successful login!");
@@ -149,10 +149,10 @@ contract SWMS {
 
     function loginMember(uint _memberId, string memory _password)  public returns (bool){
         //member not registered
-        require(memberExists(_memberId),"member not registered");
+        require(memberExists(_memberId),"___Member not registered___");
 
         // member credential invalid
-        require(isValidmember(_memberId,_password),"Invalid credentials");
+        require(isValidmember(_memberId,_password),"___Invalid credentials___");
 
         console.log("Login Successful");
         memberLoggedIn[msg.sender]=true;
@@ -161,11 +161,11 @@ contract SWMS {
     }
 
     function addWaste(uint _customerId,uint _weight) public{
-        require(customerLoggedIn[msg.sender],"Log in to add waste");
+        require(customerLoggedIn[msg.sender],"___Log in to add waste___");
         customers[_customerId].weight += _weight;
     }
     function collectWaste(uint _customerId) public returns (uint){
-        require(customerLoggedIn[msg.sender],"Log in to collect waste");
+        require(customerLoggedIn[msg.sender],"___Log in to collect waste___");
 
         uint _memberId=findAvailableMember();
         if(_memberId==0){
@@ -222,7 +222,7 @@ contract SWMS {
     }
     // member function to update that waste is collected
     function updateWasteCollected(uint _memberId,uint _customerId) public{
-        require(memberLoggedIn[msg.sender],"Member kindly loggin first");
+        require(memberLoggedIn[msg.sender],"___Member kindly loggin first___");
         customers[_customerId].weight=0; // waste collected
         customers[_customerId].memberId=0; // assigned member
 

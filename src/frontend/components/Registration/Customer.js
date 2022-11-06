@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
+import { Navigate, useNavigate } from 'react-router';
 import RegistarationFormInput from './RegistarationFormInput';
 import './RegistrationFormStyle.css';
-import { Alert } from 'bootstrap';
+// import { useNavigate } from "react-router-dom"
+
 const Customer = ({ web3Handler, account, swms }) => {
+  const navigate = useNavigate();
   const [customer, setCustomer] = useState({
     fullName: '',
     addressL1: '',
@@ -69,10 +72,11 @@ const Customer = ({ web3Handler, account, swms }) => {
     /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d][A-Za-z\d!@#$%^&*()_+]{7,19}$/
   );
   const extractErrorCode = (str) => {
+    // console.log(str);
     const delimiter = '___'; //Replace it with the delimiter you used in the Solidity Contract.
     const firstOccurence = str.indexOf(delimiter);
     if (firstOccurence == -1) {
-      return "An error occured";
+      return "An error occured:";
     }
 
     const secondOccurence = str.indexOf(delimiter, firstOccurence + 1);
@@ -90,14 +94,24 @@ const Customer = ({ web3Handler, account, swms }) => {
     if (account != null) {
       const temp = customer.addressL1 + ' ' + customer.addressL2;
       console.log('Address', temp);
-      const customerId = await swms.registerCustomer(
-        customer.fullName.toString(),
-        temp.toString(),
-        customer.password.toString()
-      );
-      console.log('Customer id: ', customerId);
+      try {
+        let customerId = await swms.registerCustomer(
+          customer.fullName.toString(),
+          temp.toString(),
+          customer.password.toString()
+
+        );
+        navigate('/login');
+
+        
+      } catch (err) {
+        // console.log('Error: ', err);
+        const errMsg = extractErrorCode(err.toString());
+        console.log('Error in registering: ', errMsg);
+        alert(errMsg);
+      }
     } else {
-      alert('Please connect your account before rgistering.');
+      alert('Please connect your metamask account before rgistering.');
     }
   };
 
@@ -106,8 +120,13 @@ const Customer = ({ web3Handler, account, swms }) => {
   };
   const checkCust = async (e) => {
     console.log('CUstomer created ..', swms);
-    let customerId = await swms.totalCustomers();
-    console.log('CID', parseInt(customerId, 16));
+    // try {
+      let customerId = await swms.totalCustomers();
+      console.log('CID', parseInt(customerId, 16));
+    // } catch (err) {
+      // console.log(err);
+      // console.log("Error in registering: ", extractErrorCode(err.toString()));
+    // }
   };
 
   // console.log(customer);
