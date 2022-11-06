@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
-// import { useNavigate } from 'react-router';
 import RegistarationFormInput from './RegistarationFormInput';
 import './RegistrationFormStyle.css';
-import { ethers } from 'ethers';
 import { Alert } from 'bootstrap';
 const Customer = ({ web3Handler, account, swms }) => {
   const [customer, setCustomer] = useState({
@@ -73,16 +71,20 @@ const Customer = ({ web3Handler, account, swms }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('HandleSubmit... ', account, swms);
-    console.log('HandleSubmit 2 ', account, swms);
-    const temp = customer.addressL1 + ' ' + customer.addressL2;
-    console.log('Address', temp);
-    const customerId = await swms.registerCustomer(
-      customer.fullName.toString(),
-      temp.toString(),
-      customer.password.toString()
-    );
-    console.log('Customer id: ', customerId);
+    console.log('here');
+    // console.log('HandleSubmit 2 ', account, swms);
+    if (account != null) {
+      const temp = customer.addressL1 + ' ' + customer.addressL2;
+      console.log('Address', temp);
+      const customerId = await swms.registerCustomer(
+        customer.fullName.toString(),
+        temp.toString(),
+        customer.password.toString()
+      );
+      console.log('Customer id: ', customerId);
+    } else {
+      alert('Please connect your account before rgistering.');
+    }
   };
 
   const onChange = (e) => {
@@ -98,14 +100,7 @@ const Customer = ({ web3Handler, account, swms }) => {
 
   return (
     <div className='divForm'>
-      <button className='submitButton' onClick={web3Handler}>
-        Connect the account
-      </button>
-      <button className='submitButton' onClick={checkCust}>
-        get cust details
-      </button>
-
-      <form onSubmit={handleSubmit} className='registrationForm'>
+      <form className='registrationForm' onSubmit={handleSubmit}>
         <h1 className='formHeader'>Customer Registration</h1>
         {inputs.map((input) => (
           <RegistarationFormInput
@@ -115,7 +110,15 @@ const Customer = ({ web3Handler, account, swms }) => {
             onChange={onChange}
           />
         ))}
-        <button className='submitButton'>Register as a customer</button>
+        <button className='submitButton' type='button' onClick={web3Handler}>
+          Connect the account
+        </button>
+        <button className='submitButton' type='submit'>
+          Register as a customer
+        </button>
+        <button className='submitButton' type='button' onClick={checkCust}>
+          Find My Details
+        </button>
       </form>
     </div>
   );

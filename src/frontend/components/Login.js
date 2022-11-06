@@ -8,7 +8,7 @@ import password from './images/password.png';
 const Login = () => {
   return (
     <div>
-      <div className='container'>
+      <div>
         <div className='sign-up'>
           <h1 className='heading'>
             <b>SIGN IN</b>
