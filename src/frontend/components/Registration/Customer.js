@@ -70,19 +70,41 @@ const Customer = ({ web3Handler, account, swms }) => {
   var pot = new RegExp(
     /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d][A-Za-z\d!@#$%^&*()_+]{7,19}$/
   );
+  const extractErrorCode = (str) => {
+    const delimiter = '___'; //Replace it with the delimiter you used in the Solidity Contract.
+    const firstOccurence = str.indexOf(delimiter);
+    if (firstOccurence == -1) {
+      return "An error occured";
+    }
 
+    const secondOccurence = str.indexOf(delimiter, firstOccurence + 1);
+    if (secondOccurence == -1) {
+      return "An error occured";
+    }
+
+    //Okay so far
+    return str.substring(firstOccurence + delimiter.length, secondOccurence);
+  }
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log('HandleSubmit... ', account, swms);
     console.log('HandleSubmit 2 ', account, swms);
     const temp = customer.addressL1 + ' ' + customer.addressL2;
     console.log('Address', temp);
-    const customerId = await swms.registerCustomer(
-      customer.fullName.toString(),
-      temp.toString(),
-      customer.password.toString()
-    );
-    console.log('Customer id: ', customerId);
+    let customerId;
+    try {
+      customerId = await swms.registerCustomer(
+        customer.fullName.toString(),
+        temp.toString(),
+        customer.password.toString()
+        );
+        console.log('Customer id: ', customerId);
+    } catch(err) {
+      console.log("Error in registering : ", err)
+      console.log("Error ", extractErrorCode(err));
+      // alert(extractErrorCode(err))
+      
+    }
   };
 
   const onChange = (e) => {

@@ -66,7 +66,7 @@ contract SWMS {
      // For committee members
     function registerCommittee(string memory _name, uint256 _contactNumber, string memory _password) public returns (uint){
         // check for uniqueness of wallet address
-        require(!doesAddressExists(payable(msg.sender)), "Please use another address");
+        require(!doesAddressExists(payable(msg.sender)), "__Please use another address. Address is registered.__");
 
         totalMembers++;
         members[totalMembers]=CommitteeMember(
