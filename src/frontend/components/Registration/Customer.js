@@ -3,8 +3,9 @@ import { Navigate, useNavigate } from 'react-router';
 import RegistarationFormInput from './RegistarationFormInput';
 import './RegistrationFormStyle.css';
 // import { useNavigate } from "react-router-dom"
+import swal from 'sweetalert';
 
-const Customer = ({ web3Handler, account, swms }) => {
+const Customer = ({ web3Handler, account, swms, provider }) => {
   const navigate = useNavigate();
   const [customer, setCustomer] = useState({
     fullName: '',
@@ -72,6 +73,8 @@ const Customer = ({ web3Handler, account, swms }) => {
     /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d][A-Za-z\d!@#$%^&*()_+]{7,19}$/
   );
   const extractErrorCode = (str) => {
+    if (str.toLower.includes('nonce too high'))
+      return "Nonce is too High\n Reset your acc using: \n settings-> Advanced-> Reset your account";
     // console.log(str);
     const delimiter = '___'; //Replace it with the delimiter you used in the Solidity Contract.
     const firstOccurence = str.indexOf(delimiter);
@@ -90,28 +93,46 @@ const Customer = ({ web3Handler, account, swms }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log('here');
+
     // console.log('HandleSubmit 2 ', account, swms);
     if (account != null) {
       const temp = customer.addressL1 + ' ' + customer.addressL2;
       console.log('Address', temp);
+      let customerId;
       try {
-        let customerId = await swms.registerCustomer(
+        customerId = await swms.registerCustomer(
           customer.fullName.toString(),
           temp.toString(),
           customer.password.toString()
 
         );
-        navigate('/login');
+        let cid;
+        // wait for transaction
 
-        
+        console.log(customerId.hash);
+        provider.waitForTransaction(customerId.hash).then(async function (customerId) {
+          console.log('Transaction Mined: ' + customerId.hash);
+          console.log(customerId);
+          cid = await swms.totalCustomers();
+          cid=parseInt(cid.toHexString(), 16)
+          swal("Hurray!!","You are registered successfully ...\n Kindly remeber your id: "+ cid,"success")
+          navigate('/login');
+          console.log("New id: ", cid);
+
+        });
+      
+
+
       } catch (err) {
         // console.log('Error: ', err);
         const errMsg = extractErrorCode(err.toString());
         console.log('Error in registering: ', errMsg);
-        alert(errMsg);
+        swal("Oops!", errMsg, "error");
       }
     } else {
-      alert('Please connect your metamask account before rgistering.');
+      // alert('Please connect your metamask account before rgistering.');
+      swal("Oops", 'Please connect your metamask account before registering.', "error");
+
     }
   };
 
@@ -121,11 +142,11 @@ const Customer = ({ web3Handler, account, swms }) => {
   const checkCust = async (e) => {
     console.log('CUstomer created ..', swms);
     // try {
-      let customerId = await swms.totalCustomers();
-      console.log('CID', parseInt(customerId, 16));
+    let customerId = await swms.totalCustomers();
+    console.log('CID', parseInt(customerId.toHexString(), 16));
     // } catch (err) {
-      // console.log(err);
-      // console.log("Error in registering: ", extractErrorCode(err.toString()));
+    // console.log(err);
+    // console.log("Error in registering: ", extractErrorCode(err.toString()));
     // }
   };
 
@@ -158,3 +179,6 @@ const Customer = ({ web3Handler, account, swms }) => {
 };
 
 export default Customer;
+
+// todo
+// add nonce too high errror message

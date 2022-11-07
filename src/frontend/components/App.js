@@ -11,11 +11,12 @@ import Welcome from './Welcome.js';
 import SWMSAddress from '../contractsData/SWMS-address.json'
 import SWMSAbi from '../contractsData/SWMS.json'
 import { ethers } from "ethers"
+import swal from 'sweetalert';
 
 function App() {
   const [account, setAccount] = useState(null)
   const [swms, setSwms] = useState({})
-
+  const [provider, setProvider] = useState();
   // loading contract
   const web3Handler = async () => {
 
@@ -27,7 +28,7 @@ function App() {
     // Get provider from Metamask
     const provider = new ethers.providers.Web3Provider(window.ethereum)
     console.log("After provider");
-
+    setProvider(provider)
     // Set signer
     const signer = provider.getSigner()
 
@@ -48,6 +49,7 @@ function App() {
     const swms1 = new ethers.Contract(SWMSAddress.address, SWMSAbi.abi, signer)
     setSwms(swms1);
     console.log("Loaded..", swms, account);
+    swal("Successfully connected","", "success");
     // setLoading(false)
   }
   return (
@@ -56,8 +58,8 @@ function App() {
       <Routes>
         <Route path='/' element={<Welcome />} />
         <Route path='/register' element={<Register />}>
-          <Route index element={<Customer web3Handler={web3Handler} account={account} swms={swms} />} />
-          <Route path='customer' element={<Customer web3Handler={web3Handler} account={account} swms={swms} />} />
+          <Route index element={<Customer web3Handler={web3Handler} account={account} swms={swms} provider={provider} />} />
+          <Route path='customer' element={<Customer web3Handler={web3Handler} account={account} swms={swms} provider={provider} />} />
           <Route path='committee' element={<Committee />} />
         </Route>
         <Route path='/login' element={<Login />} />
