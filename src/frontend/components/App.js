@@ -62,7 +62,7 @@ function App() {
           <Route path='customer' element={<Customer web3Handler={web3Handler} account={account} swms={swms} provider={provider} />} />
           <Route path='committee' element={<Committee />} />
         </Route>
-        <Route path='/login' element={<Login />} />
+        <Route path='/login' element={<Login web3Handler={web3Handler} account={account} swms={swms} />} />
       </Routes>
     </BrowserRouter>
     // </div>

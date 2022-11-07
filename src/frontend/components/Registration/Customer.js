@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { Navigate, useNavigate } from 'react-router';
+import { useNavigate } from 'react-router';
 import RegistarationFormInput from './RegistarationFormInput';
 import './RegistrationFormStyle.css';
-// import { useNavigate } from "react-router-dom"
 import swal from 'sweetalert';
 
 const Customer = ({ web3Handler, account, swms, provider }) => {
@@ -118,6 +117,9 @@ const Customer = ({ web3Handler, account, swms, provider }) => {
           swal("Hurray!!","You are registered successfully ...\n Kindly remeber your id: "+ cid,"success")
           navigate('/login');
           console.log("New id: ", cid);
+          let address = await swms.customers(cid);
+          console.log(address,typeof(cid));
+          console.log("Address" ,address.customer,typeof(cid));
 
         });
       
