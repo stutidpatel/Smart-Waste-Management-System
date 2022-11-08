@@ -73,22 +73,22 @@ const Customer = ({ web3Handler, account, swms, provider }) => {
   );
   const extractErrorCode = (str) => {
     if (str.toLower.includes('nonce too high'))
-      return "Nonce is too High\n Reset your acc using: \n settings-> Advanced-> Reset your account";
+      return 'Nonce is too High\n Reset your acc using: \n settings-> Advanced-> Reset your account';
     // console.log(str);
     const delimiter = '___'; //Replace it with the delimiter you used in the Solidity Contract.
     const firstOccurence = str.indexOf(delimiter);
     if (firstOccurence == -1) {
-      return "An error occured:";
+      return 'An error occured:';
     }
 
     const secondOccurence = str.indexOf(delimiter, firstOccurence + 1);
     if (secondOccurence == -1) {
-      return "An error occured";
+      return 'An error occured';
     }
 
     //Okay so far
     return str.substring(firstOccurence + delimiter.length, secondOccurence);
-  }
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log('here');
@@ -103,38 +103,43 @@ const Customer = ({ web3Handler, account, swms, provider }) => {
           customer.fullName.toString(),
           temp.toString(),
           customer.password.toString()
-
         );
         let cid;
         // wait for transaction
 
         console.log(customerId.hash);
-        provider.waitForTransaction(customerId.hash).then(async function (customerId) {
-          console.log('Transaction Mined: ' + customerId.hash);
-          console.log(customerId);
-          cid = await swms.totalCustomers();
-          cid=parseInt(cid.toHexString(), 16)
-          swal("Hurray!!","You are registered successfully ...\n Kindly remeber your id: "+ cid,"success")
-          navigate('/login');
-          console.log("New id: ", cid);
-          let address = await swms.customers(cid);
-          console.log(address,typeof(cid));
-          console.log("Address" ,address.customer,typeof(cid));
-
-        });
-      
-
-
+        provider
+          .waitForTransaction(customerId.hash)
+          .then(async function (customerId) {
+            console.log('Transaction Mined: ' + customerId.hash);
+            console.log(customerId);
+            cid = await swms.totalCustomers();
+            cid = parseInt(cid.toHexString(), 16);
+            swal(
+              'Hurray!!',
+              'You are registered successfully ...\n Kindly remeber your id: ' +
+                cid,
+              'success'
+            );
+            navigate('/login');
+            console.log('New id: ', cid);
+            let address = await swms.customers(cid);
+            console.log(address, typeof cid);
+            console.log('Address', address.customer, typeof cid);
+          });
       } catch (err) {
         // console.log('Error: ', err);
         const errMsg = extractErrorCode(err.toString());
         console.log('Error in registering: ', errMsg);
-        swal("Oops!", errMsg, "error");
+        swal('Oops!', errMsg, 'error');
       }
     } else {
       // alert('Please connect your metamask account before rgistering.');
-      swal("Oops", 'Please connect your metamask account before registering.', "error");
-
+      swal(
+        'Oops',
+        'Please connect your metamask account before registering.',
+        'error'
+      );
     }
   };
 
