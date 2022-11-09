@@ -22,16 +22,31 @@ const Login = ({ web3Handler, account, swms }) => {
       let isCustomer, isMember, txn;
       try {
         console.log(user.id, user.password);
-        // isCustomer = await swms.customerAddress(account);
+        isCustomer = await swms.customerAddress(account);
         console.log(isCustomer);
         if (isCustomer) {
-          console.log('is customer');
-          txn = await swms.loginCustomer();
+          console.log('is customer ', typeof(parseInt(user.id[0],10)),user.password[0]);
+          try {
+            txn = await swms.loginCustomer(parseInt(user.id[0], 10), user.password[0]);
+            console.log("Customer login done ...txn");
+            let temp = await swms.customerLoggedIn()
+            
+
+          } catch (err) {
+            let x = err.message.toString();
+            console.log('Error: ', err, "to string", x);
+            const errMsg = extractErrorCode(x);
+            console.log('Error in registering: ', errMsg);
+            swal('Oops!', errMsg, 'error');
+
+          }
         } else {
           isMember = await swms.memberAddress(account);
           console.log('Mem', isMember);
 
           if (isMember) {
+            txn = await swms.loginCommittee(user.id, user.password);
+
           } else {
             swal(
               'Oops!',
@@ -87,7 +102,7 @@ const Login = ({ web3Handler, account, swms }) => {
           }
           <div className='text'>
             <img height='20px' src={email} />
-            <input placeholder=' example: 243' name='id' onChange={onChange} />
+            <input placeholder=' example: 243' name='id' onChange={onChange} type='number' />
           </div>
           <div className='text'>
             <img height='30px' src={password} />

@@ -72,8 +72,12 @@ const Customer = ({ web3Handler, account, swms, provider }) => {
     /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d][A-Za-z\d!@#$%^&*()_+]{7,19}$/
   );
   const extractErrorCode = (str) => {
-    if (str.toLower.includes('nonce too high'))
-      return 'Nonce is too High\n Reset your acc using: \n settings-> Advanced-> Reset your account';
+    // console.log(str);
+    // console.log("Nonce: ", str,typeof(str),"      .Nonce too high.".includes('Nonce'));
+    if (str.includes('Nonce too high')) {
+      console.log("Nonce too high");
+      return '\t\tNonce is too High\n Reset your acc using: \n settings-> Advanced-> Reset your account';
+    }
     // console.log(str);
     const delimiter = '___'; //Replace it with the delimiter you used in the Solidity Contract.
     const firstOccurence = str.indexOf(delimiter);
@@ -128,8 +132,9 @@ const Customer = ({ web3Handler, account, swms, provider }) => {
             console.log('Address', address.customer, typeof cid);
           });
       } catch (err) {
-        // console.log('Error: ', err);
-        const errMsg = extractErrorCode(err.toString());
+        let x = err.message.toString();
+        console.log('Error: ', err,"to string" ,x);
+        const errMsg = extractErrorCode(x);
         console.log('Error in registering: ', errMsg);
         swal('Oops!', errMsg, 'error');
       }
