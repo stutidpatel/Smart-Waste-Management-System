@@ -1,8 +1,8 @@
 import React from 'react';
-import './RegistrationNavBarStyle.css';
 import { NavLink } from 'react-router-dom';
+import './CustomerNavBarStyles.css';
 
-const RegisterNavBar = () => {
+const CustomerNavBar = () => {
   return (
     <div className='body'>
       <nav className='nav'>
@@ -11,11 +11,13 @@ const RegisterNavBar = () => {
         </NavLink>
         <ul>
           <li>
-            <NavLink to='/register/customer'>Customer Registration</NavLink>
+            <NavLink to='/register/customer'>Add Waste</NavLink>
           </li>
-          
           <li>
-            <NavLink to='/register/committee'>Committee Registration</NavLink>
+            <NavLink to='/register/committee'>History</NavLink>
+          </li>
+          <li>
+            <NavLink to='/register/committee'>Account</NavLink>
           </li>
         </ul>
       </nav>
@@ -23,4 +25,4 @@ const RegisterNavBar = () => {
   );
 };
 
-export default RegisterNavBar;
+export default CustomerNavBar;
