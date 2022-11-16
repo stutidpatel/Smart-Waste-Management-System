@@ -12,8 +12,6 @@ import Welcome from './Welcome.js';
 
 import SWMSAddress from '../contractsData/SWMS-address.json';
 import SWMSAbi from '../contractsData/SWMS.json';
-import { ethers } from 'ethers';
-import swal from 'sweetalert';
 import CustomerHome from './Login/Customer/CustomerHome';
 import AddWaste from './Login/Customer/AddWaste';
 
