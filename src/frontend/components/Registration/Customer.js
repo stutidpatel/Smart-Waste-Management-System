@@ -95,7 +95,6 @@ const Customer = ({ web3Handler, account, swms, provider }) => {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('here');
 
     // console.log('HandleSubmit 2 ', account, swms);
     if (account != null) {
@@ -127,9 +126,16 @@ const Customer = ({ web3Handler, account, swms, provider }) => {
             );
             navigate('/login');
             console.log('New id: ', cid);
-            let address = await swms.customers(cid);
-            console.log(address, typeof cid);
-            console.log('Address', address.customer, typeof cid);
+            let _cid = await swms.customers(cid);
+            console.log(_cid, typeof cid);
+            console.log('Wallet: ', _cid.customer, typeof cid);
+            // const _name=await swms.customers(cid)
+            console.log("Name: ", _cid.name, _cid.customerId);
+            console.log("Password: ", _cid.password);
+            console.log('Address', _cid.customerAddress);
+            console.log('Member id', _cid.memberId);
+            console.log('Weight of waste', _cid.weight);
+
           });
       } catch (err) {
         let x = err.message.toString();

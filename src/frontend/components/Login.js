@@ -1,12 +1,15 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useState } from 'react';
 import './style.css';
 import profile from './images/user.jpg';
 import email from './images/email.jpg';
 import password from './images/password.png';
 import swal from 'sweetalert';
+import { useNavigate } from 'react-router';
+
 import extractErrorCode from './errorMessage';
 const Login = ({ web3Handler, account, swms }) => {
+  const navigate = useNavigate();
   const [user, setUser] = useState({
     id: '',
     password: '',
@@ -29,8 +32,10 @@ const Login = ({ web3Handler, account, swms }) => {
           try {
             txn = await swms.loginCustomer(parseInt(user.id[0], 10), user.password[0]);
             console.log("Customer login done ...txn");
-            let temp = await swms.customerLoggedIn()
-            
+            let temp = await swms.customerLoggedIn(account);
+            console.log(temp);
+            swal("Hurray", "Logged in Successfully", "success");
+            navigate('/');
 
           } catch (err) {
             let x = err.message.toString();
