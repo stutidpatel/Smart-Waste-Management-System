@@ -11,13 +11,13 @@ const CustomerNavBar = () => {
         </NavLink>
         <ul>
           <li>
-            <NavLink to='/register/customer'>Add Waste</NavLink>
+            <NavLink to='/customer-home/add-waste'>Add Waste</NavLink>
           </li>
           <li>
-            <NavLink to='/register/committee'>History</NavLink>
+            <NavLink to='/customer-home/history'>History</NavLink>
           </li>
           <li>
-            <NavLink to='/register/committee'>Account</NavLink>
+            <NavLink to='/customer-home/account'>Account</NavLink>
           </li>
         </ul>
       </nav>

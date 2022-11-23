@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
-import { ethers } from "ethers"
+import { ethers } from 'ethers';
 import swal from 'sweetalert';
 import './App.css';
 
@@ -14,6 +14,8 @@ import SWMSAddress from '../contractsData/SWMS-address.json';
 import SWMSAbi from '../contractsData/SWMS.json';
 import CustomerHome from './Login/Customer/CustomerHome';
 import AddWaste from './Login/Customer/AddWaste';
+import History from './Login/Customer/History';
+import Account from './Login/Customer/Account';
 
 function App() {
   const [account, setAccount] = useState(null);
@@ -92,7 +94,9 @@ function App() {
         />
         <Route path='/customer-home' element={<CustomerHome />}>
           <Route index element={<AddWaste />} />
-          <Route path='add-waste' />
+          <Route path='add-waste' element={<AddWaste />} />
+          <Route path='history' element={<History />} />
+          <Route path='account' element={<Account />} />
         </Route>
       </Routes>
     </BrowserRouter>
