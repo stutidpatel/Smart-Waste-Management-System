@@ -28,22 +28,27 @@ const Login = ({ web3Handler, account, swms }) => {
         isCustomer = await swms.customerAddress(account);
         console.log(isCustomer);
         if (isCustomer) {
-          console.log('is customer ', typeof(parseInt(user.id[0],10)),user.password[0]);
+          console.log(
+            'is customer ',
+            typeof parseInt(user.id[0], 10),
+            user.password[0]
+          );
           try {
-            txn = await swms.loginCustomer(parseInt(user.id[0], 10), user.password[0]);
-            console.log("Customer login done ...txn");
+            txn = await swms.loginCustomer(
+              parseInt(user.id[0], 10),
+              user.password[0]
+            );
+            console.log('Customer login done ...txn');
             let temp = await swms.customerLoggedIn(account);
             console.log(temp);
-            swal("Hurray", "Logged in Successfully", "success");
-            navigate('/');
-
+            swal('Hurray', 'Logged in Successfully', 'success');
+            navigate('/customer-home');
           } catch (err) {
             let x = err.message.toString();
-            console.log('Error: ', err, "to string", x);
+            console.log('Error: ', err, 'to string', x);
             const errMsg = extractErrorCode(x);
             console.log('Error in registering: ', errMsg);
             swal('Oops!', errMsg, 'error');
-
           }
         } else {
           isMember = await swms.memberAddress(account);
@@ -51,7 +56,6 @@ const Login = ({ web3Handler, account, swms }) => {
 
           if (isMember) {
             txn = await swms.loginCommittee(user.id, user.password);
-
           } else {
             swal(
               'Oops!',
@@ -91,10 +95,10 @@ const Login = ({ web3Handler, account, swms }) => {
   };
 
   console.log(user);
-  
+
   return (
     <div>
-      <div>
+      <div className='container'>
         <div className='sign-up'>
           <h1 className='heading'>
             <b>SIGN IN</b>
@@ -107,7 +111,12 @@ const Login = ({ web3Handler, account, swms }) => {
           }
           <div className='text'>
             <img height='20px' src={email} />
-            <input placeholder=' example: 243' name='id' onChange={onChange} type='number' />
+            <input
+              placeholder=' example: 243'
+              name='id'
+              onChange={onChange}
+              type='number'
+            />
           </div>
           <div className='text'>
             <img height='30px' src={password} />
@@ -130,7 +139,6 @@ const Login = ({ web3Handler, account, swms }) => {
             Don't have an account ? <a href='/register/customer'>Register</a>
           </p>
         </div>
-        <div className='text-container'></div>
       </div>
     </div>
   );

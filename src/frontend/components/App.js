@@ -90,7 +90,7 @@ function App() {
             <Login web3Handler={web3Handler} account={account} swms={swms} />
           }
         />
-        <Route path='/Customer-home' element={<CustomerHome />}>
+        <Route path='/customer-home' element={<CustomerHome />}>
           <Route index element={<AddWaste />} />
           <Route path='add-waste' />
         </Route>

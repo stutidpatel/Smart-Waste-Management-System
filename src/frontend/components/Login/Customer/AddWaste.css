@@ -1,0 +1,53 @@
+.addWaste {
+  background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)),
+    url(https://i.postimg.cc/YjcJg24M/aa.jpg);
+  background-size: cover;
+  background-position: center center;
+  height: 100vh;
+  align-items: center;
+  align-content: center;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.info {
+  color: wheat;
+  width: 600px;
+  height: 50px;
+  text-align: center;
+  text-transform: capitalize;
+  font-size: 20px;
+  color: olive;
+  font-weight: 800;
+}
+
+.weightInput {
+  text-align: center;
+  background-color: black;
+  color: wheat;
+  width: 20%;
+  height: 60px;
+  margin: 10px 0px;
+  border-radius: 5px;
+  border: 1 px solid gray;
+}
+
+.inputLabel {
+  font-size: 17px;
+  color: rgb(216, 216, 219);
+}
+
+.addWasteButton {
+  width: 20%;
+  height: 50px;
+  border: none;
+  background-color: rebeccapurple;
+  color: white;
+  border-radius: 5px;
+  font-weight: bold;
+  font-size: 20px;
+  cursor: pointer;
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
