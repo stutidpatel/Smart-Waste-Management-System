@@ -88,19 +88,57 @@ function App() {
               />
             }
           />
-          <Route path='committee' element={<Committee />} />
+          <Route path='committee' element={<Committee
+            web3Handler={web3Handler}
+            account={account}
+            swms={swms}
+            provider={provider} />} />
         </Route>
         <Route
           path='/login'
           element={
-            <Login web3Handler={web3Handler} account={account} swms={swms} />
+            <Login
+              web3Handler={web3Handler}
+              account={account}
+              swms={swms}
+            />
           }
         />
-        <Route path='/customer-home' element={<CustomerHome />}>
-          <Route index element={<AddWaste />} />
-          <Route path='add-waste' element={<AddWaste />} />
-          <Route path='history' element={<History />} />
-          <Route path='account' element={<Account />} />
+        <Route path='/customer-home' element={<CustomerHome
+          web3Handler={web3Handler}
+          account={account}
+          swms={swms}
+          provider={provider} />}
+        >
+          <Route index element={<AddWaste
+            web3Handler={web3Handler}
+            account={account}
+            swms={swms}
+            provider={provider}
+            
+
+          />} />
+          <Route path='add-waste' element={<AddWaste
+            web3Handler={web3Handler}
+            account={account}
+            swms={swms}
+            provider={provider}
+            
+          />} />
+          <Route path='history' element={<History
+            web3Handler={web3Handler}
+            account={account}
+            swms={swms}
+            provider={provider}
+            
+          />} />
+          <Route path='account' element={<Account
+            web3Handler={web3Handler}
+            account={account}
+            swms={swms}
+            provider={provider}
+            
+          />} />
         </Route>
         <Route path='/committee-home' element={<CommitteeHome />}>
           <Route index element={<PendingTasks />} />
