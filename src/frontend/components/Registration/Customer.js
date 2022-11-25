@@ -75,7 +75,7 @@ const Customer = ({ web3Handler, account, swms, provider }) => {
     // console.log(str);
     // console.log("Nonce: ", str,typeof(str),"      .Nonce too high.".includes('Nonce'));
     if (str.includes('Nonce too high')) {
-      console.log("Nonce too high");
+      console.log('Nonce too high');
       return '\t\tNonce is too High\n Reset your acc using: \n settings-> Advanced-> Reset your account';
     }
     // console.log(str);
@@ -99,7 +99,7 @@ const Customer = ({ web3Handler, account, swms, provider }) => {
     // console.log('HandleSubmit 2 ', account, swms);
     if (account != null) {
       const temp = customer.addressL1 + ' ' + customer.addressL2;
-      console.log('Address', temp,account);
+      console.log('Address', temp, account);
       let customerId;
       try {
         customerId = await swms.registerCustomer(
@@ -130,16 +130,15 @@ const Customer = ({ web3Handler, account, swms, provider }) => {
             console.log(_cid, typeof cid);
             console.log('Wallet: ', _cid.customer, typeof cid);
             // const _name=await swms.customers(cid)
-            console.log("Name: ", _cid.name, _cid.customerId);
-            console.log("Password: ", _cid.password);
+            console.log('Name: ', _cid.name, _cid.customerId);
+            console.log('Password: ', _cid.password);
             console.log('Address', _cid.customerAddress);
             console.log('Member id', _cid.memberId);
             console.log('Weight of waste', _cid.weight);
-
           });
       } catch (err) {
         let x = err.message.toString();
-        console.log('Error: ', err,"to string" ,x);
+        console.log('Error: ', err, 'to string', x);
         const errMsg = extractErrorCode(x);
         console.log('Error in registering: ', errMsg);
         swal('Oops!', errMsg, 'error');

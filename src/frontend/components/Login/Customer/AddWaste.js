@@ -20,7 +20,6 @@ const AddWaste = ({ web3Handler, account, swms, provider }) => {
           <option waste='biodegradable'>Biodegradable Waste</option>
           <option waste='ewaste'>E-Waste</option>
         </select>
-        x
       </div>
     );
   };

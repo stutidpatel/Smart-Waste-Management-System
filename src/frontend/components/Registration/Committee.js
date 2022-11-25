@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import RegistarationFormInput from './RegistarationFormInput';
+import './RegistrationFormStyle.css';
 
 const Committee = () => {
   const [member, setMember] = useState({
@@ -51,7 +53,31 @@ const Committee = () => {
     },
   ];
 
-  return <div>what man</div>;
+  const onChange = (e) => {
+    setMember({ ...member, [e.target.name]: [e.target.value] });
+  };
+
+  return (
+    <div className='divForm'>
+      <form className='registrationForm'>
+        <h1 className='formHeader'>Committee Registration</h1>
+        {inputs.map((input) => (
+          <RegistarationFormInput
+            key={input.id}
+            {...input}
+            onChange={onChange}
+          />
+        ))}
+
+        <button className='submitButton' type='button'>
+          Connect the account
+        </button>
+        <button className='submitButton' type='submit'>
+          Register as a customer
+        </button>
+      </form>
+    </div>
+  );
 };
 
 export default Committee;
