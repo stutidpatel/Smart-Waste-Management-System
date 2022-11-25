@@ -1,9 +1,14 @@
 import React from 'react';
 import { useState } from 'react';
 import './AddWaste.css';
+import { useLocation } from 'react-router-dom';
+import extractErrorCode from '../../ErrorMessage';
+import swal from 'sweetalert';
 
-const AddWaste = () => {
+const AddWaste = ({ web3Handler, account, swms, provider }) => {
+  const { state } = useLocation();
   const [wasteList, setWasteList] = useState([]);
+  const [weight,setWeight]=useState(0);
   const [waste, setWaste] = useState('Select Waste');
   const NewWaste = () => {
     console.log('called');
@@ -23,17 +28,57 @@ const AddWaste = () => {
   const addWaste = (e) => {
     setWasteList(wasteList.concat(<NewWaste />));
   };
+  const addWasteRequest = async() => {
+    console.log("r:", weight);
+    if (weight < 0) {
+      swal("Oops!", "Enter positive weight", 'error');
+      return;
+    }
+    let txn, verify;
+    
+    try {
+      console.log(state.customerId);
+
+      txn = await swms.addWaste(state.customerId, weight);
+      console.log("Added Waste");
+
+      provider.waitForTransaction(txn.hash)
+        .then(async function () {
+          verify = await swms.customers(state.customerId);
+          console.log("Total weight to be collected: ", parseInt(verify.weight.toHexString(), 16));
+
+          // navigate('/student-home/company');
+          // swal("Hurray", "Logged in Successfully", "success");
+
+        });
+
+     
+    } catch (error) {
+      let err = JSON.stringify(error);
+      console.log(err);
+      const errMsg = extractErrorCode(err);
+      swal('Oops!', errMsg, 'error');
+
+    }
+  }
+  const onChange = (e) => {
+    console.log("w: ",e.target.value);
+    setWeight(e.target.value);
+    // setCustomer({e.target.value });
+  };
   return (
     <div className='addWaste'>
       <p className='info'>
         Enter the approximate weight of waste you intend to give in the next
-        collection drive.
+        collection drive. {typeof (state.customerId)}
       </p>
-      <input className='weightInput' placeholder='Enter Weight in Kgs' />
-      <button className='addWasteButton'>Add Waste</button>
+      <input className='weightInput' placeholder='Enter Weight in g' onChange={onChange}/>
+      <button className='addWasteButton' onClick={addWasteRequest}>Add Waste</button>
       <span className='errorMessage'>
         The weight should only include numbers
       </span>
+
+
     </div>
   );
 };

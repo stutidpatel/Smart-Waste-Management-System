@@ -5,7 +5,7 @@ import "hardhat/console.sol";
 contract SWMS {
     uint public totalCustomers;
     uint public totalMembers;
-    uint minWeight=300;
+    uint minWeight=500;
     struct Customer{
         string name;
         uint customerId;
@@ -165,7 +165,7 @@ contract SWMS {
         customers[_customerId].weight += _weight;
     }
     function collectWaste(uint _customerId) public returns (uint){
-        require(customerLoggedIn[msg.sender],"___Log in to collect waste___");
+        require(customerLoggedIn[msg.sender] && customers[_customerId].customer==msg.sender,"___Log in to collect waste___");
 
         uint _memberId=findAvailableMember();
         if(_memberId==0){

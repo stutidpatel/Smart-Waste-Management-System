@@ -7,7 +7,7 @@ import password from './images/password.png';
 import swal from 'sweetalert';
 import { useNavigate } from 'react-router';
 
-import extractErrorCode from './errorMessage';
+import extractErrorCode from './ErrorMessage';
 const Login = ({ web3Handler, account, swms }) => {
   const navigate = useNavigate();
   const [user, setUser] = useState({
@@ -22,7 +22,7 @@ const Login = ({ web3Handler, account, swms }) => {
   const loginUser = async () => {
     console.log('In login');
     if (account != null) {
-      let isCustomer, isMember, txn;
+      let isCustomer, isMember, txn, id;
       try {
         console.log(user.id, user.password);
         isCustomer = await swms.customerAddress(account);
@@ -34,15 +34,22 @@ const Login = ({ web3Handler, account, swms }) => {
             user.password[0]
           );
           try {
+            id = parseInt(user.id[0], 10);
             txn = await swms.loginCustomer(
-              parseInt(user.id[0], 10),
+              id,
               user.password[0]
             );
             console.log('Customer login done ...txn');
             let temp = await swms.customerLoggedIn(account);
             console.log(temp);
             swal('Hurray', 'Logged in Successfully', 'success');
-            navigate('/customer-home');
+            console.log("Customer id: ",id)
+            navigate('/customer-home/add-waste', {
+              state: {
+                customerId: id
+                
+              }
+            });
           } catch (err) {
             let x = err.message.toString();
             console.log('Error: ', err, 'to string', x);
