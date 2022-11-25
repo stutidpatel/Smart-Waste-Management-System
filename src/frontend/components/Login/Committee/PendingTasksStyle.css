@@ -1,0 +1,38 @@
+.pendingCard {
+  width: 50%;
+  margin: 2rem 4rem 2rem 4rem;
+  padding: 1.5rem;
+  box-shadow: 0 0 28px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+  background-color: white;
+  color: black;
+  cursor: pointer;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 2%;
+  margin-bottom: 2%;
+}
+
+.pendingCard:hover {
+  transform: scale(1.1);
+  background-color: rgb(105, 152, 139);
+  color: white;
+}
+
+.id {
+  font-weight: 800;
+  font-size: 1.4rem;
+  text-align: center;
+}
+
+p {
+  margin: 0 2rem;
+}
+
+.cardBody {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  font-weight: 400;
+  font-size: 1rem;
+}

@@ -16,6 +16,10 @@ import CustomerHome from './Login/Customer/CustomerHome';
 import AddWaste from './Login/Customer/AddWaste';
 import History from './Login/Customer/History';
 import Account from './Login/Customer/Account';
+import CommitteeHome from './Login/Committee/CommitteeHome';
+import PendingTasks from './Login/Committee/PendingTasks';
+import CompletedTasks from './Login/Committee/CompletedTasks';
+import CommitteeAccount from './Login/Committee/CommitteeAccount';
 
 function App() {
   const [account, setAccount] = useState(null);
@@ -97,6 +101,12 @@ function App() {
           <Route path='add-waste' element={<AddWaste />} />
           <Route path='history' element={<History />} />
           <Route path='account' element={<Account />} />
+        </Route>
+        <Route path='/committee-home' element={<CommitteeHome />}>
+          <Route index element={<PendingTasks />} />
+          <Route path='pending-tasks' element={<PendingTasks />} />
+          <Route path='completed-tasks' element={<CompletedTasks />} />
+          <Route path='account' element={<CommitteeAccount />} />
         </Route>
       </Routes>
     </BrowserRouter>
