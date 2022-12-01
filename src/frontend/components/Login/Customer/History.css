@@ -10,7 +10,7 @@
 
 .historyCard:hover {
   transform: scale(1.1);
-  background-color: rgb(105, 152, 139);
+  background-color: rebeccapurple;
   color: white;
 }
 

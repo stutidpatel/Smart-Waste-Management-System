@@ -1,6 +1,6 @@
-import React from 'react'
-import { NavLink } from 'react-router-dom'
-import './CommitteeNavBarStyle.css'
+import React from 'react';
+import { NavLink } from 'react-router-dom';
+import './CommitteeNavBarStyle.css';
 
 const CommitteeNavBar = () => {
   return (
@@ -19,10 +19,13 @@ const CommitteeNavBar = () => {
           <li>
             <NavLink to='/committee-home/account'>Account</NavLink>
           </li>
+          <li>
+            <NavLink to='/login'>Logout</NavLink>
+          </li>
         </ul>
       </nav>
     </div>
-  )
-}
+  );
+};
 
-export default CommitteeNavBar
+export default CommitteeNavBar;
