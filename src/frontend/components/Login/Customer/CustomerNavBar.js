@@ -19,6 +19,9 @@ const CustomerNavBar = () => {
           <li>
             <NavLink to='/customer-home/account'>Account</NavLink>
           </li>
+          <li>
+            <NavLink to='/login'>Logout</NavLink>
+          </li>
         </ul>
       </nav>
     </div>

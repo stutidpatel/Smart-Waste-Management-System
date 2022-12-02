@@ -1,7 +1,16 @@
 import React from 'react';
+import { useLocation } from 'react-router';
 import './PendingTasksStyle.css';
 
 const PendingTasks = () => {
+  const location = useLocation();
+  localStorage.setItem('id', '');
+  if (location.state && location.state.id) {
+    localStorage.setItem('id', location.state.id);
+  }
+
+  console.log('stroed val ', localStorage.getItem('id'));
+  const committeeId = localStorage.getItem('id');
   const mockData = [
     {
       id: '01526',
@@ -51,7 +60,7 @@ export default PendingTasks;
 
 function PendingCard(props) {
   const { id, custAddress, custName, weightToBeCollected } = props;
-  console.log(id);
+  // console.log(id);
   return (
     <div className='pendingCard'>
       <div className='id'>Collection Id : {id}</div>

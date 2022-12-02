@@ -2,6 +2,7 @@ import React from 'react';
 import './CompletedTasksStyle.css';
 
 const CompletedTasks = () => {
+  console.log('stroed val ', localStorage.getItem('id'));
   const mockData = [
     {
       id: '85236',

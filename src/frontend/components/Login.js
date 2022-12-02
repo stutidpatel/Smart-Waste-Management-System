@@ -19,6 +19,7 @@ const Login = ({ web3Handler, account, swms,provider }) => {
     setUser({ ...user, [e.target.name]: [e.target.value] });
   };
 
+  // localStorage.clear(); in useEffect
   const loginUser = async () => {
     console.log('In login');
     if (account != null) {
@@ -37,20 +38,16 @@ const Login = ({ web3Handler, account, swms,provider }) => {
           );
           try {
             // id = parseInt(user.id[0], 10);
-            txn = await swms.loginCustomer(
-              id,
-              user.password[0]
-            );
+            txn = await swms.loginCustomer(id, user.password[0]);
             console.log('Customer login done ...txn');
             let temp = await swms.customerLoggedIn(account);
             console.log(temp);
             swal('Hurray', 'Logged in Successfully', 'success');
-            console.log("Customer id: ",id)
+            console.log('Customer id: ', id);
             navigate('/customer-home/add-waste', {
               state: {
-                customerId: id
-                
-              }
+                customerId: id,
+              },
             });
           } catch (err) {
             let x = err.message.toString();
@@ -111,6 +108,9 @@ const Login = ({ web3Handler, account, swms,provider }) => {
     }
   };
 
+  const mockDirectToCommitteeHome = () => {
+    navigate('/committee-home/pending-tasks', { state: { id: '1' } });
+  };
   console.log(user);
 
   return (
@@ -149,7 +149,7 @@ const Login = ({ web3Handler, account, swms,provider }) => {
             Connect Wallet
           </button>
 
-          <button className='button_login' onClick={loginUser}>
+          <button className='button_login' onClick={mockDirectToCommitteeHome}>
             LOGIN
           </button>
           <p className='conditions'>
