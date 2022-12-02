@@ -16,6 +16,7 @@ const mockData = [
       steelWaste: '5.2',
       plasticWaste: '8.7',
       eWaste: '1.4',
+      weight:1000
     },
   },
   {
@@ -25,24 +26,58 @@ const mockData = [
     collectedBy: {
       id: '234',
       name: 'Rahul Mehta',
+
     },
     amountCollected: {
       greenWaste: '5.8',
       steelWaste: '7.9',
       plasticWaste: '8.1',
       eWaste: '0.5',
+      weight: '1000'
+
     },
   },
 ];
 
 const History = ({ account, swms, provider }) => {
   const customerId = localStorage.getItem('id');
-  const [pendingRequests, setpendingRequests] = useState([]);
+  const [pendingRequests, setPendingRequests] = useState([]);
   const [pastRequests, setPastRequests] = useState([]);
   const navigate = useNavigate();
   const listCustomerDetails = async () => {
     let pendingData = [];
+    const customerDetails = await swms.customers(customerId);
+    const memberId = parseInt(customerDetails.curOrder.memberId.toHexString(), 16);
+    const memberDetails = await swms.members(memberId);
+    const weight = parseInt(customerDetails.curOrder.weight.toHexString(), 16);
+    console.log("Weight tot: ",weight);
+    pendingData.push({
+      id: 'temp123',
+      dateCollected: '29/11/2022',
+      timeCollected: '11:02 AM',
+      collectedBy: {
+        id: memberId,
+        name: memberDetails.name,
+        
+      },
+      amountCollected: {
+        greenWaste: '0',
+        steelWaste: '0',
+        plasticWaste: '0',
+        eWaste: '0',
+        weight:weight
+        // weight: '1000'
 
+      },
+
+    })
+    console.log(memberId);
+    setPendingRequests(pendingData);
+
+
+    // past requests todo
+    // const pastRequests = await swms.pastOrders();
+    // console.log("past requests");
   }
   useEffect(() => {
     if (!swms.interface ) {
@@ -55,7 +90,10 @@ const History = ({ account, swms, provider }) => {
   return (
     <div>
       <h1 style={{ textAlign: "center" }}>Pending</h1>
-
+      {pendingRequests.map((wasteCollected) => (
+        // <div>{wasteCollected.id}</div>
+        <HistoryCard props={wasteCollected} key={wasteCollected.id} />
+      ))}
       <h1 style={{ textAlign: "center" }}>Collected</h1>
       {mockData.map((wasteCollected) => (
         // <div>{wasteCollected.id}</div>
@@ -78,13 +116,18 @@ function HistoryCard({ props }) {
           <p className='colDetails'>Id : {props.collectedBy.id}</p>
           <p className='colDetails'>Name : {props.collectedBy.name}</p>
         </div>
-        <div>
-          Amount Collected In Kilo Grams:{' '}
+        
+          <div>
+          Amount Collected In  Grams:{' '}
           <p>Green Waste : {props.amountCollected.greenWaste}</p>
           <p>E-Waste : {props.amountCollected.eWaste}</p>
           <p>Steel Waste : {props.amountCollected.steelWaste}</p>
           <p>Plastic Waste : {props.amountCollected.plasticWaste}</p>
+          {
+            <p>Total : {props.amountCollected.weight}</p>
+          }
         </div>
+        
         <div>Date Collected : {props.dateCollected}</div>
         <div>Time Collected : {props.timeCollected}</div>
       </div>

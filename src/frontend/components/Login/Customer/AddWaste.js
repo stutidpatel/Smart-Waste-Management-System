@@ -67,6 +67,23 @@ const AddWaste = ({ account, swms, provider }) => {
   };
   const collectWaste = async () => {
     console.log("Calling committee");
+    let txn, verify;
+
+    try {
+
+      txn = await swms.collectWaste(customerId);
+      console.log('collected Waste',txn);
+      provider.waitForTransaction(txn.hash).then(async function () {
+        console.log(txn.decoded_output);
+        verify = await swms.customers(customerId);
+        console.log(
+          'Total weight to be collected: ',
+          parseInt(verify.curOrder.memberId.toHexString(), 16)
+        );
+      });
+    } catch (error) {
+      extractErrorCode(error);
+    }
     
   }
   const getCurrentWaste = async () => {
