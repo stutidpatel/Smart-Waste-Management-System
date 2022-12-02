@@ -42,7 +42,7 @@ function App() {
     const signer = provider.getSigner();
 
     window.ethereum.on('chainChanged', (chainId) => {
-      window.location.reload();
+      // window.location.reload();
     });
 
     window.ethereum.on('accountsChanged', async function (accounts) {
@@ -101,6 +101,7 @@ function App() {
               web3Handler={web3Handler}
               account={account}
               swms={swms}
+              provider={provider}
             />
           }
         />
@@ -140,7 +141,10 @@ function App() {
             
           />} />
         </Route>
-        <Route path='/committee-home' element={<CommitteeHome />}>
+        <Route path='/committee-home' element={<CommitteeHome web3Handler={web3Handler}
+          account={account}
+          swms={swms}
+          provider={provider} />}>
           <Route index element={<PendingTasks />} />
           <Route path='pending-tasks' element={<PendingTasks />} />
           <Route path='completed-tasks' element={<CompletedTasks />} />

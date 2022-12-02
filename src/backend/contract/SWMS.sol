@@ -45,7 +45,7 @@ contract SWMS {
 
     // "Taha","Nirma Uni","kj123@"
     function registerCustomer(string memory _name, string memory _customerAddress, string memory _password) public returns (uint){
-        // require(!doesAddressExists(payable(msg.sender)), "___Please use another address___");
+        require(!doesAddressExists(payable(msg.sender)), "___Please use another address___");
 
         totalCustomers++;
         customers[totalCustomers]=Customer(

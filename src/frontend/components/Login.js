@@ -8,7 +8,7 @@ import swal from 'sweetalert';
 import { useNavigate } from 'react-router';
 
 import extractErrorCode from './ErrorMessage';
-const Login = ({ web3Handler, account, swms }) => {
+const Login = ({ web3Handler, account, swms,provider }) => {
   const navigate = useNavigate();
   const [user, setUser] = useState({
     id: '',
@@ -23,8 +23,10 @@ const Login = ({ web3Handler, account, swms }) => {
     console.log('In login');
     if (account != null) {
       let isCustomer, isMember, txn, id;
+      id = parseInt(user.id[0], 10);
+
       try {
-        console.log(user.id, user.password);
+        console.log(id, user.password);
         isCustomer = await swms.customerAddress(account);
         console.log(isCustomer);
         if (isCustomer) {
@@ -34,7 +36,7 @@ const Login = ({ web3Handler, account, swms }) => {
             user.password[0]
           );
           try {
-            id = parseInt(user.id[0], 10);
+            // id = parseInt(user.id[0], 10);
             txn = await swms.loginCustomer(
               id,
               user.password[0]
@@ -59,10 +61,31 @@ const Login = ({ web3Handler, account, swms }) => {
           }
         } else {
           isMember = await swms.memberAddress(account);
-          console.log('Mem', isMember);
+          console.log('Mem', isMember,typeof(user.password[0]));
 
           if (isMember) {
-            txn = await swms.loginCommittee(user.id, user.password);
+            txn = await swms.loginMember(id, user.password[0]);
+            console.log("done");
+            let cid;
+            provider
+              .waitForTransaction(txn.hash)
+              .then(async function (txn) {
+                console.log('Transaction Mined: ' + txn.hash);
+                console.log(txn);
+                let loggedIn = await swms.memberLoggedIn(account);
+                console.log(loggedIn);
+                swal('Hurray', 'Logged in Successfully', 'success');
+                console.log("Member id: ", id)
+                navigate('/committee-home/pending-tasks');
+                let _cid = await swms.members(id);
+                console.log(_cid, typeof cid);
+                console.log('Wallet: ', _cid.member, typeof cid);
+                // const _name=await swms.members(cid)
+                console.log('Name: ', _cid.name, _cid.member);
+                console.log('Password: ', _cid.password);
+                console.log('Address', _cid.isAvailable);
+                console.log('Member id', _cid.customerId);
+              });
           } else {
             swal(
               'Oops!',
@@ -72,22 +95,9 @@ const Login = ({ web3Handler, account, swms }) => {
           }
         }
 
-        // wait for transaction
-
-        // console.log(customerId.hash);
-        // provider.waitForTransaction(customerId.hash).then(async function (customerId) {
-        //   console.log('Transaction Mined: ' + customerId.hash);
-        //   console.log(customerId);
-        //   cid = await swms.totalCustomers();
-        //   cid = parseInt(cid.toHexString(), 16)
-        //   swal("Hurray!!", "You are registered successfully ...\n Kindly remeber your id: " + cid, "success")
-        //   navigate('/login');
-        //   console.log("New id: ", cid);
-
-        // });
       } catch (err) {
         // console.log('Error: ', err);
-        const errMsg = extractErrorCode(err.toString());
+        const errMsg = extractErrorCode(err);
         console.log('Error in registering: ', errMsg);
         swal('Oops!', errMsg, 'error');
       }
