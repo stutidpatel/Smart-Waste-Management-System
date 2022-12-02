@@ -1,18 +1,20 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useState } from 'react';
 import './AddWaste.css';
-import { useLocation } from 'react-router-dom';
 import extractErrorCode from '../../ErrorMessage';
+import { Navigate, useLocation, useNavigate } from 'react-router';
 import swal from 'sweetalert';
 
-const AddWaste = ({ web3Handler, account, swms, provider }) => {
-  const location = useLocation();
-  localStorage.setItem('id', '');
-  if (location.state && location.state.id) {
-    localStorage.setItem('id', location.state.id);
-  }
 
+const AddWaste = ({ account, swms, provider }) => {
+  // const location = useLocation();
+  // localStorage.setItem('id', '');
+  // if (location.state && location.state.id) {
+  //   localStorage.setItem('id', location.state.id);
+  // }
+  const navigate = useNavigate();
   const customerId = localStorage.getItem('id');
+  console.log("In add wate", customerId);
   const [wasteList, setWasteList] = useState([]);
   const [weight, setWeight] = useState(0);
   const [waste, setWaste] = useState('Select Waste');
@@ -42,7 +44,7 @@ const AddWaste = ({ web3Handler, account, swms, provider }) => {
     let txn, verify;
 
     try {
-      // console.log(customerId);
+      console.log(swms);
 
       txn = await swms.addWaste(customerId, weight);
       console.log('Added Waste');
@@ -51,17 +53,11 @@ const AddWaste = ({ web3Handler, account, swms, provider }) => {
         verify = await swms.customers(customerId);
         console.log(
           'Total weight to be collected: ',
-          parseInt(verify.weight.toHexString(), 16)
+          parseInt(verify.curOrder.weight.toHexString(), 16)
         );
-
-        // navigate('/student-home/company');
-        // swal("Hurray", "Logged in Successfully", "success");
       });
     } catch (error) {
-      let err = JSON.stringify(error);
-      console.log(err);
-      const errMsg = extractErrorCode(err);
-      swal('Oops!', errMsg, 'error');
+      extractErrorCode(error);
     }
   };
   const onChange = (e) => {
@@ -69,6 +65,28 @@ const AddWaste = ({ web3Handler, account, swms, provider }) => {
     setWeight(e.target.value);
     // setCustomer({e.target.value });
   };
+  const collectWaste = async () => {
+    console.log("Calling committee");
+    
+  }
+  const getCurrentWaste = async () => {
+    console.log("cur weight");
+
+    const verify = await swms.customers(customerId);
+    const wt = parseInt(verify.curOrder.weight.toHexString(), 16);
+    console.log('Total weight to be collected: ', wt);
+    swal("Hurray!","Current waste collection is of "+ wt,"success")
+  }
+  useEffect(() => {
+    console.log(swms);
+    if (!swms.interface) {
+      swal("Session expired", "", "warning");
+      navigate("/login");
+    }
+
+
+  }, [])
+
   return (
     <div className='addWaste'>
       <p className='info'>
@@ -82,6 +100,13 @@ const AddWaste = ({ web3Handler, account, swms, provider }) => {
       />
       <button className='addWasteButton' onClick={addWasteRequest}>
         Add Waste
+      </button>
+      <button className='addWasteButton' onClick={getCurrentWaste}>
+        Current Waste
+      </button>
+      
+      <button className='addWasteButton' onClick={collectWaste}>
+        Call Committee member
       </button>
       <span className='errorMessage'>
         The weight should only include numbers

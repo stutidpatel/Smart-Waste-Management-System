@@ -21,6 +21,7 @@ const Login = ({ web3Handler, account, swms,provider }) => {
 
   // localStorage.clear(); in useEffect
   const loginUser = async () => {
+    localStorage.clear();
     console.log('In login');
     if (account != null) {
       let isCustomer, isMember, txn, id;
@@ -44,11 +45,8 @@ const Login = ({ web3Handler, account, swms,provider }) => {
             console.log(temp);
             swal('Hurray', 'Logged in Successfully', 'success');
             console.log('Customer id: ', id);
-            navigate('/customer-home/add-waste', {
-              state: {
-                customerId: id,
-              },
-            });
+            localStorage.setItem('id', id);
+            navigate('/customer-home/add-waste');
           } catch (err) {
             let x = err.message.toString();
             console.log('Error: ', err, 'to string', x);
@@ -73,6 +71,7 @@ const Login = ({ web3Handler, account, swms,provider }) => {
                 console.log(loggedIn);
                 swal('Hurray', 'Logged in Successfully', 'success');
                 console.log("Member id: ", id)
+                localStorage.setItem('id', id);
                 navigate('/committee-home/pending-tasks');
                 let _cid = await swms.members(id);
                 console.log(_cid, typeof cid);
@@ -108,9 +107,9 @@ const Login = ({ web3Handler, account, swms,provider }) => {
     }
   };
 
-  const mockDirectToCommitteeHome = () => {
-    navigate('/committee-home/pending-tasks', { state: { id: '1' } });
-  };
+  // const mockDirectToCommitteeHome = () => {
+  //   navigate('/committee-home/pending-tasks', { state: { id: '1' } });
+  // };
   console.log(user);
 
   return (
@@ -149,7 +148,7 @@ const Login = ({ web3Handler, account, swms,provider }) => {
             Connect Wallet
           </button>
 
-          <button className='button_login' onClick={mockDirectToCommitteeHome}>
+          <button className='button_login' onClick={loginUser}>
             LOGIN
           </button>
           <p className='conditions'>

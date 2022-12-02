@@ -3,14 +3,15 @@ import { useLocation } from 'react-router';
 import './PendingTasksStyle.css';
 
 const PendingTasks = () => {
-  const location = useLocation();
-  localStorage.setItem('id', '');
-  if (location.state && location.state.id) {
-    localStorage.setItem('id', location.state.id);
-  }
+  // const location = useLocation();
+  // localStorage.setItem('id', '');
+  // if (location.state && location.state.id) {
+  //   localStorage.setItem('id', location.state.id);
+  // }
 
-  console.log('stroed val ', localStorage.getItem('id'));
+  console.log('stored val ', localStorage.getItem('id'));
   const committeeId = localStorage.getItem('id');
+  console.log("in pending taks c id", committeeId);
   const mockData = [
     {
       id: '01526',

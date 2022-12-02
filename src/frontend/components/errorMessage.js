@@ -1,6 +1,7 @@
 import swal from "sweetalert";
 
 function extractErrorCode(str) {
+    console.log("in extract",str);
     str = JSON.stringify(str);
     console.log(str)
     let ans="";

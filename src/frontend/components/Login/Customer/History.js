@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './History.css';
-
+import { Navigate, useLocation, useNavigate } from 'react-router';
+import swal from 'sweetalert';
 const mockData = [
   {
     id: '01526',
@@ -34,9 +35,28 @@ const mockData = [
   },
 ];
 
-const History = () => {
+const History = ({ account, swms, provider }) => {
+  const customerId = localStorage.getItem('id');
+  const [pendingRequests, setpendingRequests] = useState([]);
+  const [pastRequests, setPastRequests] = useState([]);
+  const navigate = useNavigate();
+  const listCustomerDetails = async () => {
+    let pendingData = [];
+
+  }
+  useEffect(() => {
+    if (!swms.interface ) {
+      swal('Expired', '', 'warning');
+      navigate('/login');
+    }
+    // if()
+    listCustomerDetails();
+  }, []);
   return (
     <div>
+      <h1 style={{ textAlign: "center" }}>Pending</h1>
+
+      <h1 style={{ textAlign: "center" }}>Collected</h1>
       {mockData.map((wasteCollected) => (
         // <div>{wasteCollected.id}</div>
         <HistoryCard props={wasteCollected} key={wasteCollected.id} />

@@ -106,13 +106,13 @@ function App() {
           }
         />
         <Route path='/customer-home' element={<CustomerHome
-          web3Handler={web3Handler}
+          // web3Handler={web3Handler}
           account={account}
           swms={swms}
           provider={provider} />}
         >
           <Route index element={<AddWaste
-            web3Handler={web3Handler}
+            // web3Handler={web3Handler}
             account={account}
             swms={swms}
             provider={provider}
@@ -120,21 +120,20 @@ function App() {
 
           />} />
           <Route path='add-waste' element={<AddWaste
-            web3Handler={web3Handler}
+            // web3Handler={web3Handler}
             account={account}
             swms={swms}
             provider={provider}
             
           />} />
           <Route path='history' element={<History
-            web3Handler={web3Handler}
             account={account}
             swms={swms}
             provider={provider}
             
           />} />
           <Route path='account' element={<Account
-            web3Handler={web3Handler}
+            // web3Handler={web3Handler}
             account={account}
             swms={swms}
             provider={provider}
@@ -145,9 +144,22 @@ function App() {
           account={account}
           swms={swms}
           provider={provider} />}>
-          <Route index element={<PendingTasks />} />
-          <Route path='pending-tasks' element={<PendingTasks />} />
-          <Route path='completed-tasks' element={<CompletedTasks />} />
+          <Route index element={
+            <PendingTasks
+              account={account}
+              swms={swms}
+              provider={provider}
+            />} />
+          <Route path='pending-tasks' element={<PendingTasks
+            account={account}
+            swms={swms}
+            provider={provider}
+          />} />
+          <Route path='completed-tasks' element={<CompletedTasks
+            account={account}
+            swms={swms}
+            provider={provider}
+          />} />
           <Route path='account' element={<CommitteeAccount />} />
         </Route>
       </Routes>
