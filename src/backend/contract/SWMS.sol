@@ -6,14 +6,23 @@ contract SWMS {
     uint public totalCustomers;
     uint public totalMembers;
     uint minWeight=500;
+    struct Order{
+        uint weight;
+        uint memberId;
+        uint customerId;
+        uint price;
+        // string status; //pending completed
+    }
     struct Customer{
         string name;
         uint customerId;
         address payable customer;
         string customerAddress; 
         string password;
-        uint weight; // in grams
-        uint memberId;
+        uint totWeight; // in grams that is collected
+        // uint memberId;
+        Order curOrder;
+        // Order[] pastOrders;
     }
 
     struct CommitteeMember {
@@ -26,6 +35,7 @@ contract SWMS {
         uint customerId;
 
     }
+    Order[] public pastOrders;
     // store by id
     mapping(uint=>Customer) public customers;
     mapping(uint=>CommitteeMember) public members;
@@ -46,7 +56,7 @@ contract SWMS {
     // "Taha","Nirma Uni","kj123@"
     function registerCustomer(string memory _name, string memory _customerAddress, string memory _password) public returns (uint){
         require(!doesAddressExists(payable(msg.sender)), "___Please use another address___");
-
+        // Order empty=Order(0,0,0,"");
         totalCustomers++;
         customers[totalCustomers]=Customer(
             _name,
@@ -55,8 +65,8 @@ contract SWMS {
             _customerAddress,
             _password,
             0,
-            0
-        
+            Order(0,0,totalCustomers,0)
+
         );
         customerAddress[msg.sender]=true;
         console.log("Customer Id: ",totalCustomers);
@@ -162,7 +172,9 @@ contract SWMS {
 
     function addWaste(uint _customerId,uint _weight) public{
         require(customerLoggedIn[msg.sender],"___Log in to add waste___");
-        customers[_customerId].weight += _weight;
+        // if(compare(customers[_customerId].curOrder.status,"pending"))
+            customers[_customerId].curOrder.weight+=_weight;
+        // customers[_customerId].totWeight += _weight;
     }
     function collectWaste(uint _customerId) public returns (uint){
         require(customerLoggedIn[msg.sender] && customers[_customerId].customer==msg.sender,"___Log in to collect waste___");
@@ -172,7 +184,7 @@ contract SWMS {
             console.log("No member is currently available");
 
             // if enough waste enqueue customer
-            if(customers[_customerId].weight >= minWeight){
+            if(customers[_customerId].curOrder.weight >= minWeight){
                 lastQueue += 1;
                 collectionQueue[lastQueue] = _customerId;
             }else{
@@ -183,9 +195,9 @@ contract SWMS {
 
 
         // member is notified to collect waste
-        if(customers[_customerId].weight >= minWeight){
+        if(customers[_customerId].curOrder.weight >= minWeight){
             notifyMember(_memberId,_customerId);
-            customers[_customerId].memberId=_memberId;
+            customers[_customerId].curOrder.memberId=_memberId;
             console.log("Member updated");
             // member is updated;
             return 1;
@@ -213,18 +225,31 @@ contract SWMS {
         members[_memberId].customerId = _customerId;
         members[_memberId].isAvailable=false;
 
-        customers[_customerId].memberId=_memberId;
+        customers[_customerId].curOrder.memberId=_memberId;
         console.log("Customer ", _customerId);
         console.log(" is assigned Member ",_memberId);
 
         delete collectionQueue[firstQueue];
         firstQueue += 1;
     }
+    function calcPrice()public pure returns(uint){
+
+        return 10; // temp
+    }
+
+
     // member function to update that waste is collected
     function updateWasteCollected(uint _memberId,uint _customerId) public{
         require(memberLoggedIn[msg.sender],"___Member kindly loggin first___");
-        customers[_customerId].weight=0; // waste collected
-        customers[_customerId].memberId=0; // assigned member
+        
+        uint price=calcPrice();
+        pastOrders.push(Order(customers[_customerId].curOrder.weight,_memberId,_customerId,price));
+        customers[_customerId].totWeight += customers[_customerId].curOrder.weight;
+        
+
+        // empty the cur Order
+        customers[_customerId].curOrder=Order(0,0,_customerId,0);
+
 
         members[_memberId].isAvailable=true; 
         members[_memberId].customerId=0;
