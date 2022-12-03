@@ -15,12 +15,12 @@ import SWMSAbi from '../contractsData/SWMS.json';
 import CustomerHome from './Login/Customer/CustomerHome';
 import AddWaste from './Login/Customer/AddWaste';
 import History from './Login/Customer/History';
-import Account from './Login/Customer/CustomerAccount';
 import CommitteeHome from './Login/Committee/CommitteeHome';
 import PendingTasks from './Login/Committee/PendingTasks';
 import CompletedTasks from './Login/Committee/CompletedTasks';
 import CommitteeAccount from './Login/Committee/CommitteeAccount';
 import CustomerAccount from './Login/Customer/CustomerAccount';
+import Address from './Address';
 
 function App() {
   const [account, setAccount] = useState(null);
@@ -66,6 +66,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path='/' element={<Welcome />} />
+        <Route path='/address' element={<Address />} />
         <Route path='/register' element={<Register />}>
           <Route
             index
