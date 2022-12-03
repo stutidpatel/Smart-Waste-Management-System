@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './History.css';
 import { Navigate, useLocation, useNavigate } from 'react-router';
 import swal from 'sweetalert';
+import extractErrorCode from '../../ErrorMessage';
 const mockData = [
   {
     id: '01526',
@@ -42,42 +43,85 @@ const mockData = [
 const History = ({ account, swms, provider }) => {
   const customerId = localStorage.getItem('id');
   const [pendingRequests, setPendingRequests] = useState([]);
-  const [pastRequests, setPastRequests] = useState([]);
+  // const [pastRequests, setPastRequests] = useState([]);
+  const [pastOrders, setPastOrders] = useState([]);
+
   const navigate = useNavigate();
   const listCustomerDetails = async () => {
     let pendingData = [];
     const customerDetails = await swms.customers(customerId);
     const memberId = parseInt(customerDetails.curOrder.memberId.toHexString(), 16);
-    const memberDetails = await swms.members(memberId);
-    const weight = parseInt(customerDetails.curOrder.weight.toHexString(), 16);
-    console.log("Weight tot: ",weight);
-    pendingData.push({
-      id: 'temp123',
-      dateCollected: '29/11/2022',
-      timeCollected: '11:02 AM',
-      collectedBy: {
-        id: memberId,
-        name: memberDetails.name,
+    if (memberId != 0) {
+      const memberDetails = await swms.members(memberId);
+      const weight = parseInt(customerDetails.curOrder.weight.toHexString(), 16);
+      console.log("Weight tot: ", weight);
+      pendingData.push({
+        id: 'temp123',
+        dateCollected: '29/11/2022',
+        timeCollected: '11:02 AM',
+        collectedBy: {
+          id: memberId,
+          name: memberDetails.name,
         
-      },
-      amountCollected: {
-        greenWaste: '0',
-        steelWaste: '0',
-        plasticWaste: '0',
-        eWaste: '0',
-        weight:weight
-        // weight: '1000'
+        },
+        amountCollected: {
+          greenWaste: '0',
+          steelWaste: '0',
+          plasticWaste: '0',
+          eWaste: '0',
+          weight: weight
+          // weight: '1000'
 
-      },
+        },
 
-    })
+      })
+    }
     console.log(memberId);
     setPendingRequests(pendingData);
 
 
     // past requests todo
-    // const pastRequests = await swms.pastOrders();
-    // console.log("past requests");
+    let order, verify, totalOrders, pastOrders = [];
+
+    try {
+      totalOrders = await swms.getPastOrderLength();
+      console.log('tot past order', totalOrders);
+
+      for (let index = 0; index < totalOrders; index++) {
+        order = await swms.pastOrders(index);
+        if (order.customerId == customerId) {
+          let memberDetails = await swms.members(order.memberId);
+          pastOrders.push({
+            id: 'temp',
+            dateCollected: '',
+            timeCollected: '',
+            collectedBy: {
+              id: parseInt(order.memberId.toHexString(), 16),
+              name: memberDetails.name,
+
+            },
+            amountCollected: {
+              greenWaste: '0',
+              steelWaste: '0',
+              plasticWaste: '0',
+              eWaste: '0',
+              weight: parseInt(order.weight.toHexString(), 16)
+              // weight: '1000'
+
+            },
+
+          })
+        }
+        console.log(order.weight);
+        console.log(order.customerId);
+        console.log(order.memberId);
+        console.log(order.price);
+
+      }
+    } catch (error) {
+      extractErrorCode(error);
+    }
+    setPastOrders(pastOrders);
   }
   useEffect(() => {
     if (!swms.interface ) {
@@ -90,15 +134,49 @@ const History = ({ account, swms, provider }) => {
   return (
     <div>
       <h1 style={{ textAlign: "center" }}>Pending</h1>
-      {pendingRequests.map((wasteCollected) => (
-        // <div>{wasteCollected.id}</div>
-        <HistoryCard props={wasteCollected} key={wasteCollected.id} />
-      ))}
+      <div>
+        {
+          (pendingRequests.length != 0) ?
+            <div>
+              {
+                pendingRequests.map((wasteCollected) => (
+                  // <div>{wasteCollected.id}</div>
+                  <HistoryCard props={wasteCollected} key={wasteCollected.id} />
+                ))
+              }
+
+            </div>
+            : (
+              <h3 style={{ textAlign: "center" }}>No Requests Pending</h3>
+
+            )
+        }
+      </div>
       <h1 style={{ textAlign: "center" }}>Collected</h1>
-      {mockData.map((wasteCollected) => (
-        // <div>{wasteCollected.id}</div>
-        <HistoryCard props={wasteCollected} key={wasteCollected.id} />
-      ))}
+      <div>
+        {
+
+          (pastOrders.length != 0) ?
+            <div>
+              {
+                pastOrders.map((wasteCollected) => (
+                  // <div>{wasteCollected.id}</div>   
+                  <HistoryCard props={wasteCollected} key={wasteCollected.id} />
+            ))
+              }
+              {
+                // mockData.map((wasteCollected) => (
+                // // <div>{wasteCollected.id}</div>
+                // <HistoryCard props={wasteCollected} key={wasteCollected.id} />
+                // ))
+              }
+
+            </div>
+            : (
+              <h2 style={{ textAlign: "center" }}>No completed Order </h2>
+            )
+        }
+      </div>
     </div>
   );
 };

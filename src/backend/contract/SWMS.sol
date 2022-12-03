@@ -36,6 +36,10 @@ contract SWMS {
 
     }
     Order[] public pastOrders;
+    function getPastOrderLength()public view returns(uint){
+        return pastOrders.length;
+    }
+    event AppointedMember(uint memberId,string reason);
     // store by id
     mapping(uint=>Customer) public customers;
     mapping(uint=>CommitteeMember) public members;
@@ -178,7 +182,7 @@ contract SWMS {
     }
     function collectWaste(uint _customerId) public returns (uint){
         require(customerLoggedIn[msg.sender] && customers[_customerId].customer==msg.sender,"___Log in to collect waste___");
-
+        require(customers[_customerId].curOrder.memberId==0,"___Committee Member appointed Already Appointed___");
         uint _memberId=findAvailableMember();
         if(_memberId==0){
             console.log("No member is currently available");
@@ -188,8 +192,12 @@ contract SWMS {
                 lastQueue += 1;
                 collectionQueue[lastQueue] = _customerId;
             }else{
-                console.log("Member will assigned after reaching the min val");
+                emit AppointedMember(0,"___Not enough waste___");
+                return 2;// not enough waste
+                // console.log("Member will assigned after reaching the min val");
             }
+            emit AppointedMember(0,"___No member Available currently___");
+
             return 0; //no member available
         }
 
@@ -200,15 +208,20 @@ contract SWMS {
             customers[_customerId].curOrder.memberId=_memberId;
             console.log("Member updated");
             // member is updated;
+            emit AppointedMember(_memberId,"___Committee Member appointed___");
+
             return 1;
         }
         // not enough waste
         console.log("Not enough waste");
+        emit AppointedMember(0,"___Not enough waste___");
+
         return 2;
     
     }
     function notifyMember(uint _memberId,uint _customerId) internal{
         members[_memberId].customerId=_customerId;
+        members[_memberId].isAvailable=false;
     }
     function findAvailableMember() public view returns (uint){
 

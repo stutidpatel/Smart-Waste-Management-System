@@ -1,17 +1,15 @@
-import React from 'react';
-import { useLocation } from 'react-router';
 import './PendingTasksStyle.css';
+import React, { useState, useEffect } from 'react';
+import { Navigate, useLocation, useNavigate } from 'react-router';
+import swal from 'sweetalert';
+import extractErrorCode from '../../ErrorMessage';
 
-const PendingTasks = () => {
-  // const location = useLocation();
-  // localStorage.setItem('id', '');
-  // if (location.state && location.state.id) {
-  //   localStorage.setItem('id', location.state.id);
-  // }
-
-  console.log('stored val ', localStorage.getItem('id'));
-  const committeeId = localStorage.getItem('id');
-  console.log("in pending taks c id", committeeId);
+const PendingTasks = ({ swms, provider }) => {
+  const memberId = localStorage.getItem('id');
+  const [customerId, setCustomerId] = useState(0);
+  const [pendingRequests, setPendingRequests] = useState([]);
+  const navigate = useNavigate();
+  console.log("in pending taks com id", memberId);
   const mockData = [
     {
       id: '01526',
@@ -47,15 +45,102 @@ const PendingTasks = () => {
       weightToBeCollected: '10',
     },
   ];
+  const listPendingRequests = async () => {
+    // setPendingRequests([]);
+    let pendingData = [];
+    const memberDetails = await swms.members(memberId);
+    const customerId = parseInt(memberDetails.customerId.toHexString(), 16);
+
+    console.log(customerId);
+    setCustomerId(customerId);
+    if (customerId == 0) {
+      return 0;
+    }
+    const customerDetails = await swms.customers(customerId);
+    const weight = parseInt(customerDetails.curOrder.weight.toHexString(), 16);
+    console.log("Weight tot: ", weight, customerDetails.customerAddress);
+
+    pendingData.push({
+      id: '01526',
+      custAddress: {
+        firstLine: customerDetails.customerAddress,
+        secondLine: 'Nil',
+        thirdLine: 'Nil',
+        pincode: 'Nil',
+      },
+      custName: customerDetails.name,
+      weightToBeCollected: parseInt(customerDetails.curOrder.weight.toHexString(), 16),
+    })
+    console.log("Pushed in pending data");
+    setPendingRequests(pendingData);
+
+    return 1;
+  }
+  const updateWasteIsCollected = async () => {
+    let txn, verify;
+
+    try {
+      txn = await swms.updateWasteCollected(memberId, customerId);
+      // console.log('collected Waste', txn);
+      provider.waitForTransaction(txn.hash).then(async function () {
+        // console.log("Decoded ", txn.decoded_output);
+        verify = await swms.customers(customerId);
+        console.log("Customer ", verify.curOrder.memberId, verify.curOrder.weight, verify.curOrder.price);
+        const memId = parseInt(verify.curOrder.memberId.toHexString(), 16);
+      });
+      // swal("Member", "Appointed Member id " + memId);
+      // console.log('Member collecting hte waste: ',parseInt(verify.curOrder.memberId.toHexString(), 16));
+    } catch (error) {
+      extractErrorCode(error);
+    }
+  }
+  const [count, setCount] = useState(0);
+  useEffect(() => {
+    if (!swms.interface) {
+      swal('Expired', '', 'warning');
+      navigate('/login');
+    }
+    // if()
+    // if (swms.interface) 
+    setCount(listPendingRequests());
+    console.log("count: ", count);
+
+  }, []);
+  // if (count == 0) {
+  //   return (
+  //     <h1 style={{ textAlign: "center" }}>No Requests</h1>
+  //   )
+  // } else { 
 
   return (
     <div>
-      {mockData.map((task) => (
-        <PendingCard {...task} key={task.id} />
-      ))}
+      {
+        // {count}
+        (pendingRequests.length != 0) ?
+          <div>
+            {
+              pendingRequests.map((task) => (
+                <PendingCard {...task} key={task.id} />
+              ))
+            }
+            {
+            //   mockData.map((task) => (
+            //     <PendingCard {...task} key={task.id} />
+            // ))
+            }
+
+            <button className='addWasteButton' onClick={updateWasteIsCollected}>
+              Waste Collected
+            </button>
+
+          </div>
+          : (
+            <h1 style={{ textAlign: "center" }}>No Requests</h1>
+
+          )}    
     </div>
-  );
-};
+  )
+}
 
 export default PendingTasks;
 

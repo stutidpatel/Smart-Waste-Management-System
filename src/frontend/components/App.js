@@ -141,26 +141,23 @@ function App() {
           />} />
         </Route>
         <Route path='/committee-home' element={<CommitteeHome web3Handler={web3Handler}
-          account={account}
           swms={swms}
           provider={provider} />}>
           <Route index element={
             <PendingTasks
-              account={account}
               swms={swms}
               provider={provider}
             />} />
           <Route path='pending-tasks' element={<PendingTasks
-            account={account}
             swms={swms}
             provider={provider}
           />} />
           <Route path='completed-tasks' element={<CompletedTasks
-            account={account}
             swms={swms}
             provider={provider}
           />} />
-          <Route path='account' element={<CommitteeAccount />} />
+          <Route path='account' element={<CommitteeAccount swms={swms}
+            provider={provider} />} />
         </Route>
       </Routes>
     </BrowserRouter>

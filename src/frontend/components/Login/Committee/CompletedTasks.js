@@ -1,8 +1,13 @@
 import React from 'react';
+import { useEffect } from 'react';
+import { useState } from 'react';
+import extractErrorCode from '../../ErrorMessage';
 import './CompletedTasksStyle.css';
 
-const CompletedTasks = () => {
+const CompletedTasks = ({ swms, provider }) => {
   console.log('stroed val ', localStorage.getItem('id'));
+  const memberId = localStorage.getItem('id');
+  const [pastOrders, setPastOrders] = useState([]);
   const mockData = [
     {
       id: '85236',
@@ -38,11 +43,65 @@ const CompletedTasks = () => {
       weightToBeCollected: '15',
     },
   ];
+  const listPastOrders = async () => {
+    let order, verify, totalOrders, pastOrders = [];
+
+    try {
+      totalOrders = await swms.getPastOrderLength();
+      console.log('tot past order', totalOrders);
+
+      for (let index = 0; index < totalOrders; index++) {
+        order = await swms.pastOrders(index);
+        if (order.memberId == memberId) {
+          let customerDetails = await swms.customers(order.customerId);
+          pastOrders.push({
+            id: 'temp',
+            custAddress: {
+              firstLine: customerDetails.customerAddress,
+              secondLine: '',
+              thirdLine: '',
+              pincode: '',
+            },
+            custName: customerDetails.name,
+            weightCollected: parseInt(order.weight.toHexString(), 16),
+            
+          })
+        }
+      console.log(order.weight);
+      console.log(order.customerId);
+      console.log(order.memberId);
+      console.log(order.price);
+
+    }
+      // provider.waitForTransaction(order.hash).then(async function () {
+      // console.log("Decoded ", order.decoded_output);
+      // verify = await swms.customers(customerId);
+      // console.log("Customer ", verify.curOrder.memberId, verify.curOrder.weight, verify.curOrder.price);
+      // const memId = parseInt(verify.curOrder.memberId.toHexString(), 16);
+      // });
+    } catch (error) {
+    extractErrorCode(error);
+  }
+  setPastOrders(pastOrders);
+}
+useEffect(() => {
+  listPastOrders();
+
+}, [])
+
   return (
     <div>
-      {mockData.map((task) => (
-        <HistoryCard {...task} key={task.id} />
-      ))}
+      {
+        // mockData.map((task) => (
+        // <HistoryCard {...task} key={task.id} />
+        // ))
+      }
+
+      {
+        pastOrders.map((task) => (
+          <HistoryCard {...task} key={task.id} />
+        ))
+      }
     </div>
   );
 };

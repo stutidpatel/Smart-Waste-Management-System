@@ -72,9 +72,20 @@ const AddWaste = ({ account, swms, provider }) => {
     try {
 
       txn = await swms.collectWaste(customerId);
-      console.log('collected Waste',txn);
+      console.log('collected Waste', txn);
+      
       provider.waitForTransaction(txn.hash).then(async function () {
-        console.log(txn.decoded_output);
+        console.log("Decoded ", txn.decoded_output);
+        console.log(txn.value);
+        // swms.filters.AppointedMember()
+        swms.on("AppointedMember", (memId, status, event) => {
+          console.log(`${memId} status  ${status}`);
+          extractErrorCode(status);
+          // The event object contains the verbatim log data, the
+          // EventFragment and functions to fetch the block,
+          // transaction and receipt and event functions
+        });
+        console.log("Logs", txn.logs);
         verify = await swms.customers(customerId);
         console.log(
           'Total weight to be collected: ',
@@ -85,6 +96,23 @@ const AddWaste = ({ account, swms, provider }) => {
       extractErrorCode(error);
     }
     
+  }
+  const findAppointedMember = async () => {
+    let txn, verify;
+
+    try {
+
+      // txn = await swms.collectWaste(customerId);
+      // console.log('collected Waste', txn);
+      // provider.waitForTransaction(txn.hash).then(async function () {
+        // console.log("Decoded ", txn.decoded_output);
+      verify = await swms.customers(customerId);
+      const memId = parseInt(verify.curOrder.memberId.toHexString(), 16);
+      swal("Member","Appointed Member id " + memId);
+      // console.log('Member collecting hte waste: ',parseInt(verify.curOrder.memberId.toHexString(), 16));
+    } catch (error) {
+      extractErrorCode(error);
+    }
   }
   const getCurrentWaste = async () => {
     console.log("cur weight");
@@ -124,6 +152,9 @@ const AddWaste = ({ account, swms, provider }) => {
       
       <button className='addWasteButton' onClick={collectWaste}>
         Call Committee member
+      </button>
+      <button className='addWasteButton' onClick={findAppointedMember}>
+        Member Appointed
       </button>
       <span className='errorMessage'>
         The weight should only include numbers
