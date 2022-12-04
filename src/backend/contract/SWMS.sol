@@ -103,7 +103,7 @@ contract SWMS {
     }
 
     // customer registered
-    function customerExists(uint _customerId) public view returns (bool) {
+    function customerExists(uint _customerId) internal view returns (bool) {
         if(customers[_customerId].customer==msg.sender){
             // console.log("Customer is registered with this acc");
             return true;
@@ -114,7 +114,7 @@ contract SWMS {
 
     } 
     // id matches the psw
-    function isValidCustomer(uint _customerId,string memory _password) public view returns (bool){
+    function isValidCustomer(uint _customerId,string memory _password) internal view returns (bool){
         if(keccak256(abi.encodePacked(customers[_customerId].password))== keccak256(abi.encodePacked(_password))){
             return true;
         }
@@ -142,7 +142,7 @@ contract SWMS {
 
    
     // registered or not
-    function memberExists(uint _memberId) public view returns (bool) {
+    function memberExists(uint _memberId) internal view returns (bool) {
         // member address has this
         if(members[_memberId].member== msg.sender){
             return true;
@@ -154,7 +154,7 @@ contract SWMS {
         return false;
     }
      
-    function isValidmember(uint _memberId,string memory _password) public view returns (bool){
+    function isValidmember(uint _memberId,string memory _password) internal view returns (bool){
         if(keccak256(abi.encodePacked(members[_memberId].password))== keccak256(abi.encodePacked(_password))){
             return true;
         }
@@ -245,20 +245,47 @@ contract SWMS {
         delete collectionQueue[firstQueue];
         firstQueue += 1;
     }
-    function calcPrice()public pure returns(uint){
+   
 
-        return 10; // temp
+    function random(uint max) internal view returns(uint) {
+        uint seed = uint(keccak256(abi.encodePacked(block.timestamp)));
+      
+        return seed % max + 1; // 1 and range
+    }
+    uint[4] public ethPerGram=[0.01 ether,0.012 ether,0.02 ether,0.015 ether];
+
+    function getCurOrderPrice(uint _customerId) public view returns(uint){
+        return customers[_customerId].curOrder.price;
+    }
+    function calcPrice(uint _customerId)public returns(uint){
+        uint _weight=customers[_customerId].curOrder.weight;
+        uint[4] memory distributedWeights; // from waste segregator
+        uint curMax=_weight;
+        uint price;
+        for(uint i=0;i<3;i++){
+            distributedWeights[i]=random(curMax);
+            curMax -= distributedWeights[i];
+            
+            price+=ethPerGram[i]*distributedWeights[i];
+            console.log(distributedWeights[i]);
+            
+        }
+        console.log(curMax);
+        distributedWeights[3] = curMax;
+        price += ethPerGram[3]*distributedWeights[3];
+        console.log(price);
+        //price
+        customers[_customerId].curOrder.price=price;
+        return price; 
     }
 
 
     // member function to update that waste is collected
-    function updateWasteCollected(uint _memberId,uint _customerId) public{
-        require(memberLoggedIn[msg.sender],"___Member kindly loggin first___");
-        
-        uint price=calcPrice();
-        pastOrders.push(Order(customers[_customerId].curOrder.weight,_memberId,_customerId,price));
-        customers[_customerId].totWeight += customers[_customerId].curOrder.weight;
-        
+    function updateWasteCollected(uint _memberId,uint _customerId,uint _price) internal{
+        uint _weight=customers[_customerId].curOrder.weight;
+        // uint price=calcPrice(_weight);
+        pastOrders.push(Order(_weight,_memberId,_customerId,_price));
+        customers[_customerId].totWeight += _weight;
 
         // empty the cur Order
         customers[_customerId].curOrder=Order(0,0,_customerId,0);
@@ -273,7 +300,15 @@ contract SWMS {
 
 
     }
-    function payCustomer(uint eths)public{
+
+    function payCustomer(uint _memberId,uint _customerId) public payable{
+        require(customers[_customerId].curOrder.memberId!=_memberId,"___Already paid___");
+        require(members[customers[_customerId].curOrder.memberId].member==msg.sender,"___Not appointed member___");
+        require(memberLoggedIn[msg.sender],"___Member kindly loggin first___");
+        
+        // uint _price=calcPrice(customers[_customerId].curOrder.weight);
+        customers[_customerId].customer.transfer(msg.value);
+        updateWasteCollected(_memberId,_customerId,msg.value);
         
     }
 
