@@ -2,7 +2,7 @@ import React from 'react';
 import { Outlet } from 'react-router';
 import CustomerNavBar from './CustomerNavBar';
 
-const CustomerHome = () => {
+const CustomerHome = ({ account, swms, provider }) => {
   return (
     <div>
       <CustomerNavBar />

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router';
 import RegistarationFormInput from './RegistarationFormInput';
 import './RegistrationFormStyle.css';
 import swal from 'sweetalert';
+import extractErrorCode from '../ErrorMessage';
 
 const Customer = ({ web3Handler, account, swms, provider }) => {
   const navigate = useNavigate();
@@ -71,28 +72,7 @@ const Customer = ({ web3Handler, account, swms, provider }) => {
   var pot = new RegExp(
     /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d][A-Za-z\d!@#$%^&*()_+]{7,19}$/
   );
-  const extractErrorCode = (str) => {
-    // console.log(str);
-    // console.log("Nonce: ", str,typeof(str),"      .Nonce too high.".includes('Nonce'));
-    if (str.includes('Nonce too high')) {
-      console.log('Nonce too high');
-      return '\t\tNonce is too High\n Reset your acc using: \n settings-> Advanced-> Reset your account';
-    }
-    // console.log(str);
-    const delimiter = '___'; //Replace it with the delimiter you used in the Solidity Contract.
-    const firstOccurence = str.indexOf(delimiter);
-    if (firstOccurence == -1) {
-      return 'An error occured:';
-    }
 
-    const secondOccurence = str.indexOf(delimiter, firstOccurence + 1);
-    if (secondOccurence == -1) {
-      return 'An error occured';
-    }
-
-    //Okay so far
-    return str.substring(firstOccurence + delimiter.length, secondOccurence);
-  };
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -137,11 +117,7 @@ const Customer = ({ web3Handler, account, swms, provider }) => {
             console.log('Weight of waste', _cid.weight);
           });
       } catch (err) {
-        let x = err.message.toString();
-        console.log('Error: ', err, 'to string', x);
-        const errMsg = extractErrorCode(x);
-        console.log('Error in registering: ', errMsg);
-        swal('Oops!', errMsg, 'error');
+        extractErrorCode(err);
       }
     } else {
       // alert('Please connect your metamask account before rgistering.');
@@ -157,7 +133,7 @@ const Customer = ({ web3Handler, account, swms, provider }) => {
     setCustomer({ ...customer, [e.target.name]: [e.target.value] });
   };
   const checkCust = async (e) => {
-    console.log('CUstomer created ..', swms);
+    console.log('Customer created ..', swms);
     // try {
     let customerId = await swms.totalCustomers();
     console.log('CID', parseInt(customerId.toHexString(), 16));

@@ -43,7 +43,7 @@ function App() {
     const signer = provider.getSigner();
 
     window.ethereum.on('chainChanged', (chainId) => {
-      window.location.reload();
+      // window.location.reload();
     });
 
     window.ethereum.on('accountsChanged', async function (accounts) {
@@ -103,17 +103,18 @@ function App() {
               web3Handler={web3Handler}
               account={account}
               swms={swms}
+              provider={provider}
             />
           }
         />
         <Route path='/customer-home' element={<CustomerHome
-          web3Handler={web3Handler}
+          // web3Handler={web3Handler}
           account={account}
           swms={swms}
           provider={provider} />}
         >
           <Route index element={<AddWaste
-            web3Handler={web3Handler}
+            // web3Handler={web3Handler}
             account={account}
             swms={swms}
             provider={provider}
@@ -121,14 +122,13 @@ function App() {
 
           />} />
           <Route path='add-waste' element={<AddWaste
-            web3Handler={web3Handler}
+            // web3Handler={web3Handler}
             account={account}
             swms={swms}
             provider={provider}
             
           />} />
           <Route path='history' element={<History
-            web3Handler={web3Handler}
             account={account}
             swms={swms}
             provider={provider}
@@ -142,11 +142,24 @@ function App() {
             
           />} />
         </Route>
-        <Route path='/committee-home' element={<CommitteeHome />}>
-          <Route index element={<PendingTasks />} />
-          <Route path='pending-tasks' element={<PendingTasks />} />
-          <Route path='completed-tasks' element={<CompletedTasks />} />
-          <Route path='account' element={<CommitteeAccount />} />
+        <Route path='/committee-home' element={<CommitteeHome web3Handler={web3Handler}
+          swms={swms}
+          provider={provider} />}>
+          <Route index element={
+            <PendingTasks
+              swms={swms}
+              provider={provider}
+            />} />
+          <Route path='pending-tasks' element={<PendingTasks
+            swms={swms}
+            provider={provider}
+          />} />
+          <Route path='completed-tasks' element={<CompletedTasks
+            swms={swms}
+            provider={provider}
+          />} />
+          <Route path='account' element={<CommitteeAccount swms={swms}
+            provider={provider} />} />
         </Route>
       </Routes>
     </BrowserRouter>
