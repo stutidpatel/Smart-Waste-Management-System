@@ -14,13 +14,13 @@ function extractErrorCode(str) {
     else {
         const delimiter = '___'; //Replace it with the delimiter you used in the Solidity Contract.
         firstOccurence = str.indexOf(delimiter);
-        if (firstOccurence == -1) {
+        if (firstOccurence === -1) {
             ans = 'An error occured:';
         }
         else {
 
             secondOccurence = str.indexOf(delimiter, firstOccurence + 1);
-            if (secondOccurence == -1) {
+            if (secondOccurence === -1) {
                 ans = 'An error occured';
             }
             else {
