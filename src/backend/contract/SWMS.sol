@@ -302,16 +302,14 @@ contract SWMS {
     }
 
     function payCustomer(uint _memberId,uint _customerId) public payable{
-        require(customers[_customerId].curOrder.memberId!=_memberId,"___Already paid___");
+        require(customers[_customerId].curOrder.memberId==_memberId,"___Already paid___");
         require(members[customers[_customerId].curOrder.memberId].member==msg.sender,"___Not appointed member___");
         require(memberLoggedIn[msg.sender],"___Member kindly loggin first___");
         
         // uint _price=calcPrice(customers[_customerId].curOrder.weight);
         customers[_customerId].customer.transfer(msg.value);
         updateWasteCollected(_memberId,_customerId,msg.value);
-        
     }
-
 }
 // add categories
 // add logout

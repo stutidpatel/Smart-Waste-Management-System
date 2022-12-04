@@ -73,6 +73,10 @@ const History = ({ account, swms, provider }) => {
           // weight: '1000'
 
         },
+        price: {
+          amount:'0',
+        }
+       
 
       })
     }
@@ -109,6 +113,8 @@ const History = ({ account, swms, provider }) => {
               // weight: '1000'
 
             },
+            price: parseInt(order.price.toHexString(), 16)/1e18 +" ETH",
+            
 
           })
         }
@@ -207,7 +213,7 @@ function HistoryCard({ props }) {
         </div>
         
         <div>Date Collected : {props.dateCollected}</div>
-        <div>Time Collected : {props.timeCollected}</div>
+        <div>Price : {props.price}</div>
       </div>
     </div>
   );

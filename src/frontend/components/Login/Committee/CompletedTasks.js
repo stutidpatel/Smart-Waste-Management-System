@@ -64,7 +64,7 @@ const CompletedTasks = ({ swms, provider }) => {
             },
             custName: customerDetails.name,
             weightCollected: parseInt(order.weight.toHexString(), 16),
-            
+            price: parseInt(order.price.toHexString(), 16) / 1e18 + " ETH",
           })
         }
       console.log(order.weight);
@@ -92,15 +92,23 @@ useEffect(() => {
   return (
     <div>
       {
-        // mockData.map((task) => (
-        // <HistoryCard {...task} key={task.id} />
-        // ))
-      }
+        (pastOrders.length > 0) ?
+          <div>
+            {
+              // mockData.map((task) => (
+              // <HistoryCard {...task} key={task.id} />
+              // ))
+            }
 
-      {
-        pastOrders.map((task) => (
-          <HistoryCard {...task} key={task.id} />
-        ))
+            {
+              pastOrders.map((task) => (
+                <HistoryCard {...task} key={task.id} />
+              ))
+            }
+          </div> : (
+            < h2 style={{ textAlign: "center" }}>No completed Order </h2>
+
+          )
       }
     </div>
   );
@@ -109,7 +117,7 @@ useEffect(() => {
 export default CompletedTasks;
 
 function HistoryCard(props) {
-  const { id, custAddress, custName, weightCollected } = props;
+  const { id, custAddress, custName, weightCollected, price } = props;
   console.log(id);
   return (
     <div className='completedCard'>
@@ -124,7 +132,10 @@ function HistoryCard(props) {
           Name of Customer :<p className='colDetails'>{custName}</p>
         </div>
         <div>
-          Amount in Kgs: <p>{weightCollected}</p>
+          Amount in g: <p>{weightCollected}</p>
+        </div>
+        <div>
+          Price: <p>{price}</p>
         </div>
       </div>
     </div>

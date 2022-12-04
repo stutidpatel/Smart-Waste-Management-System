@@ -3,6 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { Navigate, useLocation, useNavigate } from 'react-router';
 import swal from 'sweetalert';
 import extractErrorCode from '../../ErrorMessage';
+import { utils } from 'ethers';
+// import { ethers } from "ethers"
 
 const PendingTasks = ({ swms, provider }) => {
   const memberId = localStorage.getItem('id');
@@ -77,16 +79,22 @@ const PendingTasks = ({ swms, provider }) => {
     return 1;
   }
   const updateWasteIsCollected = async () => {
-    let txn, verify;
-
+    let txn, price;
     try {
-      txn = await swms.updateWasteCollected(memberId, customerId);
+       txn = await swms.calcPrice(customerId);
+      // txn = await swms.updateWasteCollected(memberId, customerId);
       // console.log('collected Waste', txn);
       provider.waitForTransaction(txn.hash).then(async function () {
-        // console.log("Decoded ", txn.decoded_output);
-        verify = await swms.customers(customerId);
-        console.log("Customer ", verify.curOrder.memberId, verify.curOrder.weight, verify.curOrder.price);
-        const memId = parseInt(verify.curOrder.memberId.toHexString(), 16);
+        price = await swms.getCurOrderPrice(customerId);
+        price = parseInt(price.toHexString(), 16)
+        price /= 1e18;
+        console.log("Price: ", price);
+        txn = await swms.payCustomer(memberId, customerId, { value: utils.parseEther(price.toString()) });
+        swal("Success", "Paid " + utils.formatEther(price), 'success');
+        // verify = await swms.customers(customerId);
+
+        // console.log("Customer ", verify.curOrder.memberId, verify.curOrder.weight, verify.curOrder.price);
+        // const memId = parseInt(verify.curOrder.memberId.toHexString(), 16);
       });
       // swal("Member", "Appointed Member id " + memId);
       // console.log('Member collecting hte waste: ',parseInt(verify.curOrder.memberId.toHexString(), 16));
@@ -94,7 +102,14 @@ const PendingTasks = ({ swms, provider }) => {
       extractErrorCode(error);
     }
   }
+
   const [count, setCount] = useState(0);
+  const temp = async () => {
+    // console.log()
+    const verify = await swms.getCurOrderPrice(customerId);
+    console.log(parseInt(verify.toHexString(), 16)/1e18);
+
+  }
   useEffect(() => {
     if (!swms.interface) {
       swal('Expired', '', 'warning');
@@ -132,7 +147,7 @@ const PendingTasks = ({ swms, provider }) => {
             <button className='addWasteButton' onClick={updateWasteIsCollected}>
               Waste Collected
             </button>
-
+            <button onClick={temp}>price</button>
           </div>
           : (
             <h1 style={{ textAlign: "center" }}>No Requests</h1>
