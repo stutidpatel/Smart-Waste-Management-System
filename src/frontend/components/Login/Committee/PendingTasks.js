@@ -61,14 +61,15 @@ const PendingTasks = ({ swms, provider }) => {
     const customerDetails = await swms.customers(customerId);
     const weight = parseInt(customerDetails.curOrder.weight.toHexString(), 16);
     console.log("Weight tot: ", weight, customerDetails.customerAddress);
-
+    const address = customerDetails.customerAddress.split("\n");
+    console.log("line 1", address[0], address[1]);
     pendingData.push({
-      id: '01526',
+      id: customerId,
       custAddress: {
-        firstLine: customerDetails.customerAddress,
-        secondLine: 'Nil',
-        thirdLine: 'Nil',
-        pincode: 'Nil',
+        firstLine: address[0],
+        secondLine: address[1],
+        thirdLine: '',
+        pincode: '',
       },
       custName: customerDetails.name,
       weightToBeCollected: parseInt(customerDetails.curOrder.weight.toHexString(), 16),
@@ -143,11 +144,15 @@ const PendingTasks = ({ swms, provider }) => {
             //     <PendingCard {...task} key={task.id} />
             // ))
             }
-
+            <center>
             <button className='addWasteButton' onClick={updateWasteIsCollected}>
-              Waste Collected
+            Waste Collected
             </button>
-            <button onClick={temp}>price</button>
+            </center>
+            <center>
+            
+            <button className= 'addWasteButton' onClick={temp}>Price</button>
+            </center>
           </div>
           : (
             <h1 style={{ textAlign: "center" }}>No Requests</h1>
@@ -164,7 +169,7 @@ function PendingCard(props) {
   // console.log(id);
   return (
     <div className='pendingCard'>
-      <div className='id'>Collection Id : {id}</div>
+      <div className='id'>Customer Id : {id}</div>
       <div className='cardBody'>
         <div>
           Address :<p className='colDetails'>{custAddress.firstLine}</p>
@@ -175,7 +180,7 @@ function PendingCard(props) {
           Name of Customer :<p className='colDetails'>{custName}</p>
         </div>
         <div>
-          Amount in Kgs: <p>{weightToBeCollected}</p>
+          Amount in grams: <p>{weightToBeCollected}</p>
         </div>
       </div>
     </div>

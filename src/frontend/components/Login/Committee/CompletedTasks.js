@@ -54,11 +54,13 @@ const CompletedTasks = ({ swms, provider }) => {
         order = await swms.pastOrders(index);
         if (order.memberId == memberId) {
           let customerDetails = await swms.customers(order.customerId);
+          const address = customerDetails.customerAddress.split("\n");
+
           pastOrders.push({
-            id: 'temp',
+            id: order.customerId,
             custAddress: {
-              firstLine: customerDetails.customerAddress,
-              secondLine: '',
+              firstLine: address[0],
+              secondLine: address[1],
               thirdLine: '',
               pincode: '',
             },
@@ -121,7 +123,7 @@ function HistoryCard(props) {
   console.log(id);
   return (
     <div className='completedCard'>
-      <div className='id'>Collection Id : {id}</div>
+      <div className='id'>Customer Id : {parseInt(id.toHexString(),16)}</div>
       <div className='cardBody'>
         <div>
           Address :<p className='colDetails'>{custAddress.firstLine}</p>
@@ -135,7 +137,7 @@ function HistoryCard(props) {
           Amount in g: <p>{weightCollected}</p>
         </div>
         <div>
-          Price: <p>{price}</p>
+          Price: <p>{props.price}</p>
         </div>
       </div>
     </div>
