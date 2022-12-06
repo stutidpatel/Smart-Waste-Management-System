@@ -2,9 +2,8 @@ import React, { useEffect } from 'react';
 import { useState } from 'react';
 import './AddWaste.css';
 import extractErrorCode from '../../ErrorMessage';
-import { Navigate, useLocation, useNavigate } from 'react-router';
+import { useNavigate } from 'react-router';
 import swal from 'sweetalert';
-
 
 const AddWaste = ({ account, swms, provider }) => {
   // const location = useLocation();
@@ -14,7 +13,7 @@ const AddWaste = ({ account, swms, provider }) => {
   // }
   const navigate = useNavigate();
   const customerId = localStorage.getItem('id');
-  console.log("In add wate", customerId);
+  console.log('In add wate', customerId);
   const [wasteList, setWasteList] = useState([]);
   const [weight, setWeight] = useState(0);
   const [waste, setWaste] = useState('Select Waste');
@@ -66,26 +65,25 @@ const AddWaste = ({ account, swms, provider }) => {
     // setCustomer({e.target.value });
   };
   const collectWaste = async () => {
-    console.log("Calling committee");
+    console.log('Calling committee');
     let txn, verify;
 
     try {
-
       txn = await swms.collectWaste(customerId);
       console.log('collected Waste', txn);
-      
+
       provider.waitForTransaction(txn.hash).then(async function () {
-        console.log("Decoded ", txn.decoded_output);
+        console.log('Decoded ', txn.decoded_output);
         console.log(txn.value);
         // swms.filters.AppointedMember()
-        swms.on("AppointedMember", (memId, status, event) => {
+        swms.on('AppointedMember', (memId, status, event) => {
           console.log(`${memId} status  ${status}`);
           extractErrorCode(status);
           // The event object contains the verbatim log data, the
           // EventFragment and functions to fetch the block,
           // transaction and receipt and event functions
         });
-        console.log("Logs", txn.logs);
+        console.log('Logs', txn.logs);
         verify = await swms.customers(customerId);
         console.log(
           'Total weight to be collected: ',
@@ -95,42 +93,38 @@ const AddWaste = ({ account, swms, provider }) => {
     } catch (error) {
       extractErrorCode(error);
     }
-    
-  }
+  };
   const findAppointedMember = async () => {
     let txn, verify;
 
     try {
-
       // txn = await swms.collectWaste(customerId);
       // console.log('collected Waste', txn);
       // provider.waitForTransaction(txn.hash).then(async function () {
-        // console.log("Decoded ", txn.decoded_output);
+      // console.log("Decoded ", txn.decoded_output);
       verify = await swms.customers(customerId);
       const memId = parseInt(verify.curOrder.memberId.toHexString(), 16);
-      swal("Member","Appointed Member id " + memId);
+      swal('Member', 'Appointed Member id ' + memId);
       // console.log('Member collecting hte waste: ',parseInt(verify.curOrder.memberId.toHexString(), 16));
     } catch (error) {
       extractErrorCode(error);
     }
-  }
+  };
   const getCurrentWaste = async () => {
-    console.log("cur weight");
+    console.log('cur weight');
 
     const verify = await swms.customers(customerId);
     const wt = parseInt(verify.curOrder.weight.toHexString(), 16);
     console.log('Total weight to be collected: ', wt);
-    swal("Hurray!","Current waste collection is of "+ wt,"success")
-  }
+    swal('Hurray!', 'Current waste collection is of ' + wt, 'success');
+  };
   useEffect(() => {
     console.log(swms);
     if (!swms.interface) {
-      swal("Session expired", "", "warning");
-      navigate("/login");
+      swal('Session expired', '', 'warning');
+      navigate('/login');
     }
-
-
-  }, [])
+  }, []);
 
   return (
     <div className='addWaste'>
@@ -149,7 +143,7 @@ const AddWaste = ({ account, swms, provider }) => {
       <button className='addWasteButton' onClick={getCurrentWaste}>
         Current Waste
       </button>
-      
+
       <button className='addWasteButton' onClick={collectWaste}>
         Call Committee member
       </button>

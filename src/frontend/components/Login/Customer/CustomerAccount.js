@@ -4,7 +4,8 @@ const CustomerAccount = () => {
   const mockData = {
     name: 'Taha Firoz',
     id: '12',
-    address: 'This is the address',
+    addressLineOne: 'This is the address Line One',
+    addressLineTwo: 'This is the address Line Two',
   };
   return (
     <div className='customerBox'>
@@ -18,8 +19,12 @@ const CustomerAccount = () => {
           <div className='cell'>{mockData.id}</div>
         </div>
         <div className='row'>
-          <div className='cell'>Address : </div>
-          <div className='cell'>{mockData.address}</div>
+          <div className='cell'>Address Line One : </div>
+          <div className='cell'>{mockData.addressLineOne}</div>
+        </div>
+        <div className='row'>
+          <div className='cell'>Address Line Two : </div>
+          <div className='cell'>{mockData.addressLineTwo}</div>
         </div>
       </div>
     </div>
