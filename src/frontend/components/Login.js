@@ -48,11 +48,7 @@ const Login = ({ web3Handler, account, swms,provider }) => {
             localStorage.setItem('id', id);
             navigate('/customer-home/add-waste');
           } catch (err) {
-            let x = err.message.toString();
-            console.log('Error: ', err, 'to string', x);
-            const errMsg = extractErrorCode(x);
-            console.log('Error in registering: ', errMsg);
-            swal('Oops!', errMsg, 'error');
+            extractErrorCode(err);
           }
         } else {
           isMember = await swms.memberAddress(account);

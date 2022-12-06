@@ -135,11 +135,7 @@ function App() {
             
           />} />
           <Route path='account' element={<CustomerAccount
-            web3Handler={web3Handler}
-            account={account}
             swms={swms}
-            provider={provider}
-            
           />} />
         </Route>
         <Route path='/committee-home' element={<CommitteeHome web3Handler={web3Handler}
@@ -159,7 +155,7 @@ function App() {
             provider={provider}
           />} />
           <Route path='account' element={<CommitteeAccount swms={swms}
-            provider={provider} />} />
+             />} />
         </Route>
       </Routes>
     </BrowserRouter>
