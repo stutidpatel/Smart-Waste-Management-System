@@ -1,6 +1,7 @@
 .customerBox {
   display: flex;
   align-items: center;
+  flex-direction: column;
   justify-content: center;
   height: 100vh;
   background: linear-gradient(
@@ -11,4 +12,24 @@
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
+}
+
+.innerBox {
+  width: 25%;
+  border-width: 5px;
+  border-color: gold;
+  border-style: solid;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.row {
+  justify-content: space-between;
+  align-items: stretch;
+}
+
+.cell {
+  display: table-cell;
+  overflow: hidden;
+  width: fit-content;
 }
