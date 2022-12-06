@@ -3,6 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { Navigate, useLocation, useNavigate } from 'react-router';
 import swal from 'sweetalert';
 import extractErrorCode from '../../ErrorMessage';
+import { utils } from 'ethers';
+// import { ethers } from "ethers"
 
 const PendingTasks = ({ swms, provider }) => {
   const memberId = localStorage.getItem('id');
@@ -59,14 +61,15 @@ const PendingTasks = ({ swms, provider }) => {
     const customerDetails = await swms.customers(customerId);
     const weight = parseInt(customerDetails.curOrder.weight.toHexString(), 16);
     console.log("Weight tot: ", weight, customerDetails.customerAddress);
-
+    const address = customerDetails.customerAddress.split("\n");
+    console.log("line 1", address[0], address[1]);
     pendingData.push({
-      id: '01526',
+      id: customerId,
       custAddress: {
-        firstLine: customerDetails.customerAddress,
-        secondLine: 'Nil',
-        thirdLine: 'Nil',
-        pincode: 'Nil',
+        firstLine: address[0],
+        secondLine: address[1],
+        thirdLine: '',
+        pincode: '',
       },
       custName: customerDetails.name,
       weightToBeCollected: parseInt(customerDetails.curOrder.weight.toHexString(), 16),
@@ -77,16 +80,22 @@ const PendingTasks = ({ swms, provider }) => {
     return 1;
   }
   const updateWasteIsCollected = async () => {
-    let txn, verify;
-
+    let txn, price;
     try {
-      txn = await swms.updateWasteCollected(memberId, customerId);
+       txn = await swms.calcPrice(customerId);
+      // txn = await swms.updateWasteCollected(memberId, customerId);
       // console.log('collected Waste', txn);
       provider.waitForTransaction(txn.hash).then(async function () {
-        // console.log("Decoded ", txn.decoded_output);
-        verify = await swms.customers(customerId);
-        console.log("Customer ", verify.curOrder.memberId, verify.curOrder.weight, verify.curOrder.price);
-        const memId = parseInt(verify.curOrder.memberId.toHexString(), 16);
+        price = await swms.getCurOrderPrice(customerId);
+        price = parseInt(price.toHexString(), 16)
+        price /= 1e18;
+        console.log("Price: ", price);
+        txn = await swms.payCustomer(memberId, customerId, { value: utils.parseEther(price.toString()) });
+        swal("Success", "Paid " + utils.formatEther(price), 'success');
+        // verify = await swms.customers(customerId);
+
+        // console.log("Customer ", verify.curOrder.memberId, verify.curOrder.weight, verify.curOrder.price);
+        // const memId = parseInt(verify.curOrder.memberId.toHexString(), 16);
       });
       // swal("Member", "Appointed Member id " + memId);
       // console.log('Member collecting hte waste: ',parseInt(verify.curOrder.memberId.toHexString(), 16));
@@ -94,7 +103,14 @@ const PendingTasks = ({ swms, provider }) => {
       extractErrorCode(error);
     }
   }
+
   const [count, setCount] = useState(0);
+  const temp = async () => {
+    // console.log()
+    const verify = await swms.getCurOrderPrice(customerId);
+    console.log(parseInt(verify.toHexString(), 16)/1e18);
+
+  }
   useEffect(() => {
     if (!swms.interface) {
       swal('Expired', '', 'warning');
@@ -128,11 +144,15 @@ const PendingTasks = ({ swms, provider }) => {
             //     <PendingCard {...task} key={task.id} />
             // ))
             }
-
+            <center>
             <button className='addWasteButton' onClick={updateWasteIsCollected}>
-              Waste Collected
+            Waste Collected
             </button>
-
+            </center>
+            <center>
+            
+            <button className= 'addWasteButton' onClick={temp}>Price</button>
+            </center>
           </div>
           : (
             <h1 style={{ textAlign: "center" }}>No Requests</h1>
@@ -149,7 +169,7 @@ function PendingCard(props) {
   // console.log(id);
   return (
     <div className='pendingCard'>
-      <div className='id'>Collection Id : {id}</div>
+      <div className='id'>Customer Id : {id}</div>
       <div className='cardBody'>
         <div>
           Address :<p className='colDetails'>{custAddress.firstLine}</p>
@@ -160,7 +180,7 @@ function PendingCard(props) {
           Name of Customer :<p className='colDetails'>{custName}</p>
         </div>
         <div>
-          Amount in Kgs: <p>{weightToBeCollected}</p>
+          Amount in grams: <p>{weightToBeCollected}</p>
         </div>
       </div>
     </div>

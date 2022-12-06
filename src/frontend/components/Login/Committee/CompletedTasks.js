@@ -54,17 +54,19 @@ const CompletedTasks = ({ swms, provider }) => {
         order = await swms.pastOrders(index);
         if (order.memberId == memberId) {
           let customerDetails = await swms.customers(order.customerId);
+          const address = customerDetails.customerAddress.split("\n");
+
           pastOrders.push({
-            id: 'temp',
+            id: order.customerId,
             custAddress: {
-              firstLine: customerDetails.customerAddress,
-              secondLine: '',
+              firstLine: address[0],
+              secondLine: address[1],
               thirdLine: '',
               pincode: '',
             },
             custName: customerDetails.name,
             weightCollected: parseInt(order.weight.toHexString(), 16),
-            
+            price: parseInt(order.price.toHexString(), 16) / 1e18 + " ETH",
           })
         }
       console.log(order.weight);
@@ -92,15 +94,23 @@ useEffect(() => {
   return (
     <div>
       {
-        // mockData.map((task) => (
-        // <HistoryCard {...task} key={task.id} />
-        // ))
-      }
+        (pastOrders.length > 0) ?
+          <div>
+            {
+              // mockData.map((task) => (
+              // <HistoryCard {...task} key={task.id} />
+              // ))
+            }
 
-      {
-        pastOrders.map((task) => (
-          <HistoryCard {...task} key={task.id} />
-        ))
+            {
+              pastOrders.map((task) => (
+                <HistoryCard {...task} key={task.id} />
+              ))
+            }
+          </div> : (
+            < h2 style={{ textAlign: "center" }}>No completed Order </h2>
+
+          )
       }
     </div>
   );
@@ -109,11 +119,11 @@ useEffect(() => {
 export default CompletedTasks;
 
 function HistoryCard(props) {
-  const { id, custAddress, custName, weightCollected } = props;
+  const { id, custAddress, custName, weightCollected, price } = props;
   console.log(id);
   return (
     <div className='completedCard'>
-      <div className='id'>Collection Id : {id}</div>
+      <div className='id'>Customer Id : {parseInt(id.toHexString(),16)}</div>
       <div className='cardBody'>
         <div>
           Address :<p className='colDetails'>{custAddress.firstLine}</p>
@@ -124,7 +134,10 @@ function HistoryCard(props) {
           Name of Customer :<p className='colDetails'>{custName}</p>
         </div>
         <div>
-          Amount in Kgs: <p>{weightCollected}</p>
+          Amount in g: <p>{weightCollected}</p>
+        </div>
+        <div>
+          Price: <p>{props.price}</p>
         </div>
       </div>
     </div>

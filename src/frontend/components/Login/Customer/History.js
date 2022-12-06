@@ -56,9 +56,9 @@ const History = ({ account, swms, provider }) => {
       const weight = parseInt(customerDetails.curOrder.weight.toHexString(), 16);
       console.log("Weight tot: ", weight);
       pendingData.push({
-        id: 'temp123',
-        dateCollected: '29/11/2022',
-        timeCollected: '11:02 AM',
+        id: memberId,
+        // dateCollected: '29/11/2022',
+        // timeCollected: '11:02 AM',
         collectedBy: {
           id: memberId,
           name: memberDetails.name,
@@ -73,6 +73,9 @@ const History = ({ account, swms, provider }) => {
           // weight: '1000'
 
         },
+        price: '0',
+        
+       
 
       })
     }
@@ -93,8 +96,8 @@ const History = ({ account, swms, provider }) => {
           let memberDetails = await swms.members(order.memberId);
           pastOrders.push({
             id: 'temp',
-            dateCollected: '',
-            timeCollected: '',
+            // dateCollected: '',
+            // timeCollected: '',
             collectedBy: {
               id: parseInt(order.memberId.toHexString(), 16),
               name: memberDetails.name,
@@ -109,6 +112,8 @@ const History = ({ account, swms, provider }) => {
               // weight: '1000'
 
             },
+            price: parseInt(order.price.toHexString(), 16)/1e18 +" ETH",
+            
 
           })
         }
@@ -187,7 +192,7 @@ function HistoryCard({ props }) {
   console.log(props);
   return (
     <div className='historyCard'>
-      <div className='id'>Collection Id : {props.id}</div>
+      <div className='id'>Committee Id : {props.id}</div>
       <div className='cardBody'>
         <div>
           Collected By :
@@ -197,17 +202,20 @@ function HistoryCard({ props }) {
         
           <div>
           Amount Collected In  Grams:{' '}
-          <p>Green Waste : {props.amountCollected.greenWaste}</p>
-          <p>E-Waste : {props.amountCollected.eWaste}</p>
-          <p>Steel Waste : {props.amountCollected.steelWaste}</p>
-          <p>Plastic Waste : {props.amountCollected.plasticWaste}</p>
+          {
+          // <p>Green Waste : {props.amountCollected.greenWaste}</p>
+          // <p>E-Waste : {props.amountCollected.eWaste}</p>
+          // <p>Steel Waste : {props.amountCollected.steelWaste}</p>
+          // <p>Plastic Waste : {props.amountCollected.plasticWaste}</p>
+          }
           {
             <p>Total : {props.amountCollected.weight}</p>
           }
         </div>
-        
-        <div>Date Collected : {props.dateCollected}</div>
-        <div>Time Collected : {props.timeCollected}</div>
+        {
+          //<div>Date Collected : {props.dateCollected}</div>
+        }
+        <div>Price : {props.price}</div>
       </div>
     </div>
   );

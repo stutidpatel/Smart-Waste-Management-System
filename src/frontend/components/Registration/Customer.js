@@ -78,7 +78,7 @@ const Customer = ({ web3Handler, account, swms, provider }) => {
 
     // console.log('HandleSubmit 2 ', account, swms);
     if (account != null) {
-      const temp = customer.addressL1 + ' ' + customer.addressL2;
+      const temp = customer.addressL1 + ' \n' + customer.addressL2;
       console.log('Address', temp, account);
       let customerId;
       try {
